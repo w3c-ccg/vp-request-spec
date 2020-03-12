@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Verifiable Presentation Request Specification v0.1</title>
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+    <!--
+      === NOTA BENE ===
+      For the three scripts below, if your spec resides on dev.w3 you can check them
+      out in the same tree and use relative links so that they'll work offline,
+     -->
+    <script src='https://www.w3.org/Tools/respec/respec-w3c-common' class='remove'></script>
+    <script src="./common.js" class="remove"></script>
+    <script type="text/javascript" class="remove">
+      var respecConfig = {
+        // specification status (e.g., WD, LCWD, NOTE, etc.). If in doubt use ED.
+        specStatus: "unofficial",
+
+        // the specification's short name, as in http://www.w3.org/TR/short-name/
+        shortName: "vp-request-spec",
+
+        // subtitle for the spec
+        subtitle: "",
+
+        // if you wish the publication date to be other than today, set this
+        //publishDate: "",
+        //crEnd: "",
+        //prEnd: "",
+        //implementationReportURI: "",
+
+        // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+        // and its maturity status
+        // previousPublishDate:  "1977-03-15",
+        // previousMaturity:  "WD",
+
+        // extend the bibliography entries
+        localBiblio: ccg.localBiblio,
+        doJsonLd: true,
+
+        github: "https://github.com/digitalbazaar/vp-request-spec/",
+        includePermalinks: false,
+
+        // if there a publicly available Editor's Draft, this is the link
+        edDraftURI: "https://digitalbazaar.github.io/vp-request-spec/",
+
+        // if this is a LCWD, uncomment and set the end of its review period
+        // lcEnd: "2009-08-05",
+
+        // editors, add as many as you like
+        // only "name" is required
+        editors: [
+          { name: "Dave Longley", url: "https://github.com/dlongley",
+            company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/"},
+          { name: "Dmitri Zagidulin", url: "https://www.linkedin.com/in/dzagidulin/",
+            company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/"}
+        ],
+        // authors, add as many as you like.
+        // This is optional, uncomment if you have authors as well as editors.
+        // only "name" is required. Same format as editors.
+        authors:
+        [
+          // { name: "Dave Longley", url: "https://digitalbazaar.com/",
+          //   company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/"},
+          // { name: "Manu Sporny", url: "https://digitalbazaar.com/",
+          //   company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/" }
+        ],
+        // name of the WG
+        wg:           "W3C Credentials Community Group",
+
+        // URI of the public WG page
+        wgURI:        "https://digitalbazaar.com/",
+
+        // name (with the @w3c.org) of the public mailing to which comments are due
+        wgPublicList: "public-credentials",
+
+        // URI of the patent status for this WG, for Rec-track documents
+        // !!!! IMPORTANT !!!!
+        // This is important for Rec-track documents, do not copy a patent URI from a random
+        // document unless you know what you're doing. If in doubt ask your friendly neighborhood
+        // Team Contact.
+        wgPatentURI:  "https://www.w3.org/2004/01/pp-impl/98922/status",
+        maxTocLevel: 2,
+        inlineCSS: true
+      };
+    </script>
+    <style>
+pre .highlight {
+  font-weight: bold;
+  color: Green;
+}
+pre .subject {
+  font-weight: bold;
+  color: RoyalBlue;
+}
+pre .property {
+  font-weight: bold;
+  color: DarkGoldenrod;
+}
+pre .comment {
+  font-weight: bold;
+  color: SteelBlue;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.color-text {
+  font-weight: bold;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+This specification describes a declarative JSON-based query language used by
+applications to perform requests for Verifiable Presentations.
+      </p>
+    </section>
+
+    <section id='sotd'>
+      <p>
+This draft highlights some of the pending issues that are still to be discussed
+in the community group. No decision has been taken on the outcome of these
+issues including whether they are valid. Pull requests with proposed
+specification text for outstanding issues are strongly encouraged.
+      </p>
+    </section>
+
+    <section class="informative">
+      <h2>Introduction</h2>
+
+      <p>
+When working with Verifiable Credentials, Decentralized Identifier (DID) based
+Authentication, and Authorization Capabilities, a client application often needs
+to request credential-related objects from a wallet or agent. This document
+presents a specification that describes the format of those requests.
+      </p>
+
+    </section>
+
+    <section class="normative">
+      <h2 id="format">Request Overview</h2>
+
+      <p>
+To make a request for one or more objects wrapped in a Verifiable Presentation,
+a <a>client</a> constructs a JSON request describing one or more queries that
+it wishes to perform from the receiver.
+      </p>
+
+      <pre class="example nohighlight" title="A sample query">
+{
+  query: [{
+    type: 'APopularQueryType',
+    // query details ...
+  }, {
+    type: 'AnotherQueryType',
+    // query details ...
+  }],
+  challenge,
+  recipients: [
+    // an optional key agreement key for encrypting the response if
+    // this is supported
+  ]
+}
+      </pre>
+
+    </section>
+
+    <section class="normative">
+      <h2 id="format">Query Types</h2>
+
+      <p>
+The <a>query type</a> serves as the main extension point mechanism for
+verifiable credential requests. This document defines several common query
+types.
+      </p>
+
+      <section>
+        <h3>Query By Example</h3>
+
+        <pre class="example nohighlight" title="A Query By Example query">
+{
+  query: [{
+    type: 'QueryByExample',
+    credentialQuery: {
+      // an optional reason for requesting this credential that
+      // may be shown to a user by their wallet software
+      reason: 'We need you to prove your eligibility to work.',
+      example: {
+        '@context': [
+          'https://www.w3.org/2018/credentials/v1',
+          'https://w3id.org/citizenship/v1'
+        ],
+        type: 'PermanentResidentCard'
+      }
+    }
+  }],
+  // a 128-bit randomly generated value encoded as a string (use a UUID);
+  // it will be digitally signed in the authentication proof
+  // that will be attached to the VerifiablePresentation response
+  challenge: '3182bdea-63d9-11ea-b6de-3b7c1404d57f',
+  recipients: [
+    // an optional key agreement key for encrypting the response if this
+    // is supported
+  ]
+}
+        </pre>
+      </section>
+
+      <section>
+        <h3>DID Authentication Request</h3>
+
+        <pre class="example nohighlight" title="A DIDAuth request">
+{
+    query: [{
+      type: 'DIDAuth'
+    }],
+    // a 128-bit randomly generated value encoded as a string (use a UUID);
+    // it will be digitally signed in the authentication proof
+    // that will be attached to the VerifiablePresentation response
+    challenge: '99612b24-63d9-11ea-b99f-4f66f3e4f81a',
+    // the domain that must be digitally signed in the authentication
+    // proof that will be attached to the VerifiablePresentation
+    // response, identifying the recipient
+    domain: 'issuer.example.com'
+  }
+}
+        </pre>
+      </section>
+
+      <section>
+        <h3></h3>
+
+        <p>
+This query type would be included in a request to ask for Authorization
+Capabilities or "zcaps" in the Verifiable Presentation.
+        </p>
+
+        <pre class="example nohighlight" title="A zCap Request query">
+{
+  query: [{
+    type: 'zCapLdQuery',
+    capabilityQuery: [{
+      referenceId: `a-memorable-name`,
+      allowedAction: ['read', 'write'],
+      invoker: 'did:key:1234',
+      delegator: 'did:key:1234'
+      invocationTarget: {
+        type: 'urn:edv:documents'
+      }
+    }, {
+      referenceId: `another-memorable-name`,
+      allowedAction: 'sign',
+      invoker: 'did:key:1234',
+      delegator: 'did:key:1234',
+      invocationTarget: {
+        type: 'Ed25519VerificationKey2018',
+        proofPurpose: 'assertionMethod'
+      }
+    }]
+  }]
+}
+        </pre>
+      </section>
+
+    </section>
+
+    <section class="normative">
+      <h2 id="format">Usage Scenarios</h2>
+
+      <p>
+This request query format is intended to be used in a variety of protocols and
+usage scenarios.
+      </p>
+
+      <section class="informative">
+        <h3>Mobile Applications</h3>
+
+        <p>
+TBD
+        </p>
+      </section>
+
+      <section class="informative">
+        <h3>Peer to Peer</h3>
+
+        <p>
+TBD
+        </p>
+      </section>
+
+      <section class="informative">
+        <h3>Browser</h3>
+
+        <p>
+Credential Handler API (CHAPI).
+        </p>
+      </section>
+
+    </section>
+
+    <section class="informative">
+      <h2>Security and Privacy Considerations</h2>
+
+      <p>
+There are a number of security and privacy considerations that implementers
+will want to take into consideration when implementing this specification.
+      </p>
+
+      <section class="informative">
+        <h3>Consideration</h3>
+
+        <p>
+TBD
+        </p>
+      </section>
+    </section>
+
+  <section class="appendix informative">
+    <h2>Acknowledgements</h2>
+
+    <p>
+The Working Group would like to thank the following individuals for reviewing
+and providing feedback on the specification (in alphabetical order):
+    </p>
+
+    <p>
+TBD...
+    </p>
+  </section>
+  </body>
+</html>
