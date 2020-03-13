@@ -305,41 +305,43 @@ usage scenarios.
       </p>
 
       <section class="informative">
-        <h3>Mobile Applications</h3>
-
-        <p>
-TBD
-        </p>
-      </section>
-
-      <section class="informative">
-        <h3>Peer to Peer</h3>
-
-        <p>
-TBD. (The intention of this spec is to align the query format with existing
-protocols and messaging formats such as DIDComm.)
-        </p>
-      </section>
-
-      <section class="informative">
         <h3>Browser - Credential Handler API (CHAPI)</h3>
 
         <p>
-The [Credential Handler API (CHAPI)](https://w3c-ccg.github.io/credential-handler-api/)
-specification enables in-browser Javascript applications to communicate with
-wallet providers for the purpose of issuing Verifiable Credentials and
-requesting Verifiable Presentations. Interested implementers are encouraged
-to look at the [Credential Handler Polyfill](https://github.com/digitalbazaar/credential-handler-polyfill))
-repository for further discussion and examples.
+The <a href="https://w3c-ccg.github.io/credential-handler-api/">Credential
+Handler API (CHAPI)</a> specification enables in-browser Javascript applications
+to communicate with wallet providers for the purpose of issuing Verifiable
+Credentials and requesting Verifiable Presentations. Interested implementers are
+encouraged to look at the <a
+href="https://github.com/digitalbazaar/credential-handler-polyfill">Credential
+Handler Polyfill</a> repository for further discussion and examples.
+        </p>
+
+        <p>
+        CHAPI is an extension of the
+        <a href="https://www.w3.org/TR/credential-management-1/">Credential
+        Management API</a>, and includes the following:
+
+        <ul>
+          <li><code>navigator.credentials.get(request)</code></li>
+          <li><code>navigator.credentials.store(request)</code></li>
+        </ul>
+        </p>
+
+        <p>
+A VerifiablePresentation is used to both store or present VerifiableCredentials.
+When storing a VerifiableCredential, the VerifiablePresentation does not need to
+be signed.
         </p>
 
         <section class="informative">
           <h4>WebCredential</h4>
 
           <p>
-A VerifiablePresentation is used to both store or present VerifiableCredentials.
-When storing a VerifiableCredential, the VerifiablePresentation does not need to
-be signed.
+CHAPI provides a single derived class, the <code>WebCredential</code> that forms
+the basis for any sort of credential data that is provided over the Web, i.e.,
+via a "Credential Handler" that a origin has registered in the user's browser
+when the user visited that origin's website.
           </p>
 
           <pre class="example nohighlight" title="Creating a WebCredential instance.">
@@ -429,6 +431,22 @@ if(!result) {
         </section>
       </section>
 
+      <section class="informative">
+        <h3>Mobile Applications</h3>
+
+        <p>
+TBD
+        </p>
+      </section>
+
+      <section class="informative">
+        <h3>Peer to Peer</h3>
+
+        <p>
+TBD. (The intention of this spec is to align the query format with existing
+protocols and messaging formats such as DIDComm.)
+        </p>
+      </section>
     </section>
 
     <section class="informative">
