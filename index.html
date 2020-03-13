@@ -165,7 +165,10 @@ it wishes to perform from the receiver.
     type: 'AnotherQueryType',
     // query details ...
   }],
-  challenge,
+
+  // Challenge that will be digitally signed in the authentication proof
+  // that will be attached to the VerifiablePresentation response
+  challenge, // Required
   recipients: [
     // an optional key agreement key for encrypting the response if
     // this is supported
@@ -191,8 +194,9 @@ types.
 {
   query: [{
     type: 'QueryByExample',
-    credentialQuery: {
-      // an optional reason for requesting this credential that
+    credentialQuery: [{ // One or more example query entries
+      required: false, // (Optional) Defaults to 'true' if omitted
+      // (Optional) Reason for requesting this credential that
       // may be shown to a user by their wallet software
       reason: 'We need you to prove your eligibility to work.',
       example: {
@@ -200,18 +204,40 @@ types.
           'https://www.w3.org/2018/credentials/v1',
           'https://w3id.org/citizenship/v1'
         ],
-        type: 'PermanentResidentCard'
+        type: 'PermanentResidentCard',
+        // (Optional) You can request a specific subject id
+        credentialSubject: {
+          id: '...',
+          name: '...'
+        },
+        // (Optional) Specify only credentials of a particular schema
+        credentialSchema: {
+          id: 'urn:foo:1234'
+          type: 'SomeType'
+        },
+        // (Optional) Specify credentials from a particular issuer only
+        trustedIssuer: [{
+          required: true,
+          issuer: 'urn:some:required:issuer'
+        }],
+        // (Optional)
+        issuerQuery: [
+          // <another query by example for a VC for the
+          // issuer if using delegated trust>
+        ]
+      },
+      {
+        // Another example query
+        type: 'AnotherQueryType',
+        // ...
       }
-    }
+    }]
   }],
-  // a 128-bit randomly generated value encoded as a string (use a UUID);
-  // it will be digitally signed in the authentication proof
-  // that will be attached to the VerifiablePresentation response
   challenge: '3182bdea-63d9-11ea-b6de-3b7c1404d57f',
-  recipients: [
-    // an optional key agreement key for encrypting the response if this
-    // is supported
-  ]
+  // the domain that will be digitally signed in the authentication
+  // proof that will be attached to the VerifiablePresentation
+  // response, identifying the recipient
+  domain: 'jobs.example.com'
 }
         </pre>
       </section>
@@ -224,13 +250,7 @@ types.
     query: [{
       type: 'DIDAuth'
     }],
-    // a 128-bit randomly generated value encoded as a string (use a UUID);
-    // it will be digitally signed in the authentication proof
-    // that will be attached to the VerifiablePresentation response
     challenge: '99612b24-63d9-11ea-b99f-4f66f3e4f81a',
-    // the domain that must be digitally signed in the authentication
-    // proof that will be attached to the VerifiablePresentation
-    // response, identifying the recipient
     domain: 'issuer.example.com'
   }
 }
@@ -266,7 +286,8 @@ Capabilities or "zcaps" in the Verifiable Presentation.
         type: 'Ed25519VerificationKey2018',
         proofPurpose: 'assertionMethod'
       }
-    }]
+    }],
+    challenge: '111112b24-63d9-11ea-b99f-4f66f3e4f81a'
   }]
 }
         </pre>
