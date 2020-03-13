@@ -141,6 +141,8 @@ presents a specification that describes the format of those requests.
       <p>
 Note: This specification is unstable at present, and only reflects an effort to
 get initial interop working, for incubation and implementation experience.
+Additionally, the intention is to align this spec and the query format to
+fit into/work with other protocols/messaging formats such as DIDComm.
       </p>
 
     </section>
@@ -236,7 +238,7 @@ types.
       </section>
 
       <section>
-        <h3></h3>
+        <h3>Authorization Capability Request</h3>
 
         <p>
 This query type would be included in a request to ask for Authorization
@@ -246,7 +248,7 @@ Capabilities or "zcaps" in the Verifiable Presentation.
         <pre class="example nohighlight" title="A zCap Request query">
 {
   query: [{
-    type: 'zCapLdQuery',
+    type: 'ZcapQuery',
     capabilityQuery: [{
       referenceId: `a-memorable-name`,
       allowedAction: ['read', 'write'],
@@ -292,16 +294,117 @@ TBD
         <h3>Peer to Peer</h3>
 
         <p>
-TBD
+TBD. (The intention of this spec is to align the query format with existing
+protocols and messaging formats such as DIDComm.)
         </p>
       </section>
 
       <section class="informative">
-        <h3>Browser</h3>
+        <h3>Browser - Credential Handler API (CHAPI)</h3>
 
         <p>
-Credential Handler API (CHAPI).
+The [Credential Handler API (CHAPI)](https://w3c-ccg.github.io/credential-handler-api/)
+specification enables in-browser Javascript applications to communicate with
+wallet providers for the purpose of issuing Verifiable Credentials and
+requesting Verifiable Presentations. Interested implementers are encouraged
+to look at the [Credential Handler Polyfill](https://github.com/digitalbazaar/credential-handler-polyfill))
+repository for further discussion and examples.
         </p>
+
+        <section class="informative">
+          <h4>WebCredential</h4>
+
+          <p>
+A VerifiablePresentation is used to both store or present VerifiableCredentials.
+When storing a VerifiableCredential, the VerifiablePresentation does not need to
+be signed.
+          </p>
+
+          <pre class="example nohighlight" title="Creating a WebCredential instance.">
+const webCredential = new WebCredential('VerifiablePresentation', {
+  '@context': 'https://www.w3.org/2018/credentials/v1',
+  ...presentation
+});
+          </pre>
+        </section>
+
+        <section class="informative">
+          <h4>Requesting and Storing Credentials</h4>
+
+          <p>
+Using CHAPI, a web application can <code>get()</code> and <code>store()</code>
+credentials without knowing anything about the user's wallet. This is
+intentional; for privacy reasons, the client app must not be able to query any
+information (without user consent) about which wallets or credential handlers a
+user may have installed (otherwise, fingerprinting and other attacks would be
+possible).
+          </p>
+
+          <h4>get()</h4>
+
+          <p>
+A web app (a Relying Party or verifier) can request a credential using
+<code>credentials.get()</code> during a user gesture event, for example when
+the user pushes a button on a page that requires identity attributes or
+authentication.
+          </p>
+
+          <pre class="example nohighlight" title="Example get() request.">
+const credentialQuery = {
+  web: {
+    VerifiablePresentation: {
+      query: {
+        type: 'QueryByExample',
+        credentialQuery: {
+          // an optional reason for requesting this credential that
+          // may be shown to a user by their wallet software
+          reason: 'We need you to prove your eligibility to work.',
+          example: {
+            '@context': [
+              'https://www.w3.org/2018/credentials/v1',
+              'https://w3id.org/citizenship/v1'
+            ],
+            type: 'PermanentResidentCard'
+          }
+        }
+      },
+      // a 128-bit randomly generated value encoded as a string (use a UUID);
+      // it will be digitally signed in the authentication proof
+      // that will be attached to the VerifiablePresentation response
+      challenge: '3182bdea-63d9-11ea-b6de-3b7c1404d57f',
+      // the domain that must be digitally signed in the authentication
+      // proof that will be attached to the VerifiablePresentation
+      // response, identifying the recipient
+      domain: 'jobs.example.com'
+    }
+  }
+};
+const webCredential = await navigator.credentials.get(credentialQuery);
+
+if(!webCredential) {
+  console.log('no presentation received');
+}
+const {data: presentation} = webCredential;
+// send `presentation` to server for forwarding to verifier API
+          </pre>
+
+
+          <h4>store()</h4>
+
+          <p>
+A web app (for example, a credential issuer such as a university or institution)
+can ask to store a credential during a user gesture event, for example when the
+user pushes a button to receive a credential.
+          </p>
+
+          <pre class="example nohighlight" title="Requesting via get().">
+const result = await navigator.credentials.store(webCredential);
+if(!result) {
+  console.log('store credential operation canceled');
+}
+          </pre>
+
+        </section>
       </section>
 
     </section>
