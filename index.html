@@ -408,6 +408,21 @@ const webCredential = await navigator.credentials.get(credentialQuery);
 if(!webCredential) {
   console.log('no presentation received');
 }
+
+// Response:
+
+null // if the user cancels
+
+// or a WebCredential with these attributes/values:
+{
+  "type": "web",
+  "dataType": "VerifiablePresentation",
+  "data": {
+    // Verifiable Presentation goes here, containing the credentials
+    // that the user agreed to share, or `null` if the user canceled
+  }
+}
+
 const {data: presentation} = webCredential;
 // send `presentation` to server for forwarding to verifier API
           </pre>
@@ -425,6 +440,20 @@ user pushes a button to receive a credential.
 const result = await navigator.credentials.store(webCredential);
 if(!result) {
   console.log('store credential operation canceled');
+}
+
+// Response:
+
+null // if the user cancels
+
+// or a WebCredential with these attributes/values:
+{
+  "type": "web",
+  "dataType": "VerifiablePresentation",
+  "data": {
+    // Verifiable Presentation goes here, containing the credentials
+    // that the user agreed to store
+  }
 }
           </pre>
 
