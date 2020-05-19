@@ -193,52 +193,55 @@ types.
 
         <pre class="example nohighlight" title="A Query By Example query">
 {
-  query: [{
-    type: 'QueryByExample',
-    credentialQuery: [{ // One or more example query entries
-      required: false, // (Optional) Defaults to 'true' if omitted
-      // (Optional) Reason for requesting this credential that
-      // may be shown to a user by their wallet software
-      reason: 'We need you to prove your eligibility to work.',
-      example: {
-        '@context': [
-          'https://www.w3.org/2018/credentials/v1',
-          'https://w3id.org/citizenship/v1'
-        ],
-        type: 'PermanentResidentCard',
-        // (Optional) You can request a specific subject id
-        credentialSubject: {
-          id: '...',
-          name: '...'
+  "query": [
+    {
+      "type": "QueryByExample",
+      "credentialQuery": [
+        {
+          // One or more example query entries
+          "required": false, // (Optional) Defaults to 'true' if omitted
+          // (Optional) Reason for requesting this credential that
+          // may be shown to a user by their wallet software
+          "reason": "We need you to prove your eligibility to work.",
+          "example": {
+            "@context": ["https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"],
+            "type": "PermanentResidentCard",
+            // (Optional) You can request a specific subject id
+            "credentialSubject": {
+              "id": "...",
+              "name": "..."
+            },
+            // (Optional) Specify only credentials of a particular schema
+            "credentialSchema": {
+              "id": "urn:foo:1234",
+              "type": "SomeType"
+            },
+            // (Optional) Specify credentials from a particular issuer only
+            "trustedIssuer": [
+              {
+                "required": true,
+                "issuer": "urn:some:required:issuer"
+              }
+            ],
+            // (Optional)
+            "issuerQuery": [
+              //
+            ]
+          }
         },
-        // (Optional) Specify only credentials of a particular schema
-        credentialSchema: {
-          id: 'urn:foo:1234'
-          type: 'SomeType'
-        },
-        // (Optional) Specify credentials from a particular issuer only
-        trustedIssuer: [{
-          required: true,
-          issuer: 'urn:some:required:issuer'
-        }],
-        // (Optional)
-        issuerQuery: [
-          // <another query by example for a VC for the
-          // issuer if using delegated trust>
-        ]
-      },
-      {
-        // Another example query
-        type: 'AnotherQueryType',
-        // ...
-      }
-    }]
-  }],
-  challenge: '3182bdea-63d9-11ea-b6de-3b7c1404d57f',
+        {
+          // Another example query
+          "type": "AnotherQueryType"
+          // ...
+        }
+      ]
+    }
+  ],
+  "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f",
   // the domain that will be digitally signed in the authentication
   // proof that will be attached to the VerifiablePresentation
   // response, identifying the recipient
-  domain: 'jobs.example.com'
+  "domain": "jobs.example.com"
 }
         </pre>
       </section>
