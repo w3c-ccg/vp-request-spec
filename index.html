@@ -255,7 +255,26 @@ types.
       type: 'DIDAuth'
     }],
     challenge: '99612b24-63d9-11ea-b99f-4f66f3e4f81a',
-    domain: 'issuer.example.com'
+    domain: 'example.com'
+  }
+}
+        </pre>
+
+        <p>Response:</p>
+
+        <pre class="example nohighlight" title="A DIDAuth response">
+{
+  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "type": "VerifiablePresentation",
+  "holder": "did:example:12345",
+  "proof": {
+    "proofPurpose": "authentication",
+    "type": "Ed25519Signature2018",
+    "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
+    "domain": "example.com",
+    "created": "2020-06-06T21:05:13Z",
+    "verificationMethod": "did:example:12345#z6Mkkg...",
+    "jws": "..."
   }
 }
         </pre>
