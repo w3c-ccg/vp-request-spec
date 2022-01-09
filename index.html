@@ -247,6 +247,59 @@ types.
       </section>
 
       <section>
+        <h3>Query By Frame</h3>
+        <pre class="example nohighlight" title="A request for Query By Frame">
+          {
+            "query":
+              [
+                {
+                  "type": "RequestQueryByFrame",
+                  "credentialQuery":
+                    [
+                      {
+                        "type":
+                          [
+                              "VerifiableCredential",
+                              "VaccinationCertificate",
+                          ],
+                        "reason": "Wallet XYZ is ready to selectively disclose new credentials.",
+                      },
+                    ],
+                },
+              ],
+          }
+        </pre>
+
+        <pre class="example nohighlight" title="A query by frame from a verifier">
+          {
+            "query": [
+              {
+                "type": "QueryByFrame",
+                "credentialQuery": {
+                  "frame": {
+                    "@context": [
+                      "https://www.w3.org/2018/credentials/v1",
+                      "https://w3id.org/vaccination/v1",
+                      "https://w3id.org/security/suites/bls12381-2020/v1"
+                    ],
+                    "type": ["VerifiableCredential", "VaccinationCertificate"],
+                    "credentialSubject": {
+                      "@explicit": true,
+                      "type": ["VaccinationEvent"],
+                      "batchNumber": {},
+                      "countryOfVaccination": {}
+                    }
+                  }
+                }
+              }
+            ],
+            "domain": "jobs.example.com",
+            "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
+          }          
+        </pre>
+      </section>
+
+      <section>
         <h3>DID Authentication Request</h3>
 
         <pre class="example nohighlight" title="A DIDAuth request">
@@ -485,17 +538,703 @@ null // if the user cancels
         <h3>Mobile Applications</h3>
 
         <p>
-TBD
+          See alternative approaches in the 
+          <a href="https://identity.foundation/waci-presentation-exchange/">DIF WACI Presentation Exchange Spec</a>.
         </p>
+        
       </section>
 
       <section class="informative">
         <h3>Peer to Peer</h3>
 
-        <p>
-TBD. (The intention of this spec is to align the query format with existing
-protocols and messaging formats such as DIDComm.)
-        </p>
+        <section class="informative">
+          <h3>Machine to Machine</h3>
+          
+          <p>These APIs do not require browser polyfills and can be used with or
+             without channel authorization schemes such as access tokens provided by OAuth 2.0 Client Credentials.</p>
+
+          <section class="informative">
+            <h3>Step 1: Notification Request</h3>
+            <p>A presentation exchange workflow starts when a holder notifies a verifier of an intent to present credentials.</p>
+            <p>This is the begining of a 1-1 workflow between a holder and a verifier, 
+              where a holder notifies the verify what they indend to present,
+            and the verifier queries the holder for specific credentials that will satisfy the verifier for the given request.</p>
+
+            <pre class="example nohighlight" title="A manufacturer intends to submit trade data to US Customs.">
+{
+  "query":
+    [
+      {
+        "type": "RequestQueryByExample",
+        "credentialQuery":
+          [
+            {
+              "type":
+                [
+                    "VerifiableCredential",
+                    "MillTestReportCertificate",
+                ],
+              "reason": "Acme Steel Inc. is ready to present certificate of origin for a steel import.",
+            },
+          ],
+      },
+    ],
+}
+            </pre>
+          </section>
+
+          <section class="informative">
+            <h3>Step 2: Notification Response</h3>
+            <p>A verifier responds with a <a href="#query-by-example">QueryByExample</a> or a <a href="#query-by-frame">QueryByFrame</a></p>
+<pre class="example nohighlight" title="A verifier (US Customs) requests auxillary credentials.">
+  {
+    "query": [
+      {
+        "type": "QueryByExample",
+        "credentialQuery": {
+          "example": {
+            "@context": [
+              "https://www.w3.org/2018/credentials/v1",
+              "https://w3id.org/traceability/v1"
+            ],
+            "type": ["VerifiableCredential", "MillTestReportCertificate", "CommercialInvoiceCertificate", "BillOfLadingCertificate"]
+          }
+        }
+      }
+    ],
+    "domain": "customs.example.gov",
+    "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
+  }       
+</pre>
+          </section>
+        </section>
+
+        <section class="informative">
+          <h3>Step 3: Presentation Submission</h3>
+          <p>A holder completes the workflow they initiated by submitting a 
+            <a href="https://www.w3.org/TR/vc-data-model/#presentations">Verifiable Presentation</a>
+            over the challenge and optionally the domain obtained from Step 2.
+          </p>
+          <pre class="example nohighlight" title="A holder (Acme Steel Inc.) submits supply chain traceability credentials to a verifier that is a regulator (US Customs).">
+            {
+              "@context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://w3id.org/traceability/v1"
+              ],
+              "id": "urn:uuid:07aa969e-b40d-4c1b-ab46-ded252003ded",
+              "type": ["VerifiablePresentation"],
+              "verifiableCredential": [
+                {
+                  "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://w3id.org/traceability/v1"
+                  ],
+                  "id": "https://example.com/credential/123",
+                  "type": ["VerifiableCredential", "MillTestReportCertificate"],
+                  "name": "Certified Mill Test Report",
+                  "description": "This document includes recommended mill certificate fields.",
+                  "relatedLink": [
+                    {
+                      "type": ["LinkRole"],
+                      "target": "https://www.example.com/template/123",
+                      "linkRelationship": "templateLink"
+                    }
+                  ],
+                  "issuanceDate": "2019-12-11T03:50:55Z",
+                  "issuer": {
+                    "id": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U",
+                    "type": "Organization",
+                    "name": "Bartell Inc",
+                    "description": "Realigned maximized alliance",
+                    "address": {
+                      "type": "PostalAddress",
+                      "streetAddress": "713 Funk Parkway",
+                      "addressLocality": "Dannyside",
+                      "addressRegion": "Alabama",
+                      "postalCode": "17321",
+                      "addressCountry": "Peru"
+                    },
+                    "email": "Dion_Stoltenberg@example.org",
+                    "phoneNumber": "555-987-1014",
+                    "faxNumber": "555-377-8843"
+                  },
+                  "credentialSubject": {
+                    "type": ["MillTestReport"],
+                    "manufacturer": {
+                      "type": ["Organization"],
+                      "name": "Pacocha Group",
+                      "description": "Cross-group motivating open system",
+                      "address": {
+                        "type": ["PostalAddress"],
+                        "streetAddress": "3076 Bernier Radial",
+                        "addressLocality": "Lake Cora",
+                        "addressRegion": "Arizona",
+                        "postalCode": "54215-6259",
+                        "addressCountry": "Sweden"
+                      },
+                      "email": "Ila_VonRueden14@example.net",
+                      "phoneNumber": "555-378-2057",
+                      "faxNumber": "555-317-8070"
+                    },
+                    "product": {
+                      "type": ["SteelProduct"],
+                      "heatNumber": "29493",
+                      "specification": "ASTM-96405",
+                      "grade": "1526",
+                      "originalCountryOfMeltAndPour": "Bermuda",
+                      "inspection": {
+                        "type": ["InspectionReport"],
+                        "observation": [
+                          {
+                            "type": ["Observation"],
+                            "date": "2019-12-11T03:50:55Z",
+                            "property": {
+                              "type": ["MechanicalProperty"],
+                              "identifier": "ISO 148",
+                              "name": "Charpy Impact Strength Test",
+                              "description": "ISO 148-1:2016 specifies the Charpy (V-notch and U-notch) pendulum impact test method for determining the energy absorbed in an impact test of metallic materials. This part of ISO 148 does not cover instrumented impact testing, which is specified in ISO 14556."
+                            },
+                            "measurement": {
+                              "type": ["MeasuredValue"],
+                              "value": "38.844",
+                              "unitCode": "B13"
+                            }
+                          },
+                          {
+                            "type": ["Observation"],
+                            "date": "2019-12-11T03:50:55Z",
+                            "property": {
+                              "type": ["MechanicalProperty"],
+                              "identifier": "ISO 148",
+                              "name": "Charpy Impact Strength Test",
+                              "description": "ISO 148-1:2016 specifies the Charpy (V-notch and U-notch) pendulum impact test method for determining the energy absorbed in an impact test of metallic materials. This part of ISO 148 does not cover instrumented impact testing, which is specified in ISO 14556."
+                            },
+                            "measurement": {
+                              "type": ["MeasuredValue"],
+                              "value": "33.743",
+                              "unitCode": "B13"
+                            }
+                          },
+                          {
+                            "type": ["Observation"],
+                            "date": "2019-12-11T03:50:55Z",
+                            "property": {
+                              "type": ["MechanicalProperty"],
+                              "identifier": "ISO 3738",
+                              "name": "Rockwell Hardness Test (Scale A)",
+                              "description": "The Rockwell hardness test is an empirical indentation hardness test that can provide useful information about metallic materials."
+                            },
+                            "measurement": {
+                              "type": ["MeasuredValue"],
+                              "value": "00.00",
+                              "unitCode": "UNKNOWN"
+                            }
+                          },
+                          {
+                            "type": ["Observation"],
+                            "date": "2019-12-11T03:50:55Z",
+                            "property": {
+                              "type": ["MechanicalProperty"],
+                              "identifier": "ISO 1352",
+                              "name": "Torque-controlled fatigue testing",
+                              "description": "ISO 1352:2011 specifies the conditions for performing torsional, constant-amplitude, nominally elastic stress fatigue tests on metallic specimens without deliberately introducing stress concentrations. The tests are carried out at ambient temperature (ideally at between 10 °C and 35 °C) in air by applying a pure couple to the specimen about its longitudinal axis."
+                            },
+                            "measurement": {
+                              "type": ["MeasuredValue"],
+                              "value": "00.00",
+                              "unitCode": "UNKNOWN"
+                            }
+                          },
+                          {
+                            "type": ["Observation"],
+                            "date": "2019-12-11T03:50:55Z",
+                            "property": {
+                              "type": ["ChemicalProperty"],
+                              "name": "Zirconium"
+                            },
+                            "measurement": {
+                              "type": ["MeasuredValue"],
+                              "value": "60.811",
+                              "unitCode": "P1"
+                            }
+                          },
+                          {
+                            "type": ["Observation"],
+                            "date": "2019-12-11T03:50:55Z",
+                            "property": {
+                              "type": ["MechanicalProperty"],
+                              "identifier": "ISO 1352",
+                              "name": "Torque-controlled fatigue testing",
+                              "description": "ISO 1352:2011 specifies the conditions for performing torsional, constant-amplitude, nominally elastic stress fatigue tests on metallic specimens without deliberately introducing stress concentrations. The tests are carried out at ambient temperature (ideally at between 10 °C and 35 °C) in air by applying a pure couple to the specimen about its longitudinal axis."
+                            },
+                            "measurement": {
+                              "type": ["MeasuredValue"],
+                              "value": "00.00",
+                              "unitCode": "UNKNOWN"
+                            }
+                          },
+                          {
+                            "type": ["Observation"],
+                            "date": "2019-12-11T03:50:55Z",
+                            "property": {
+                              "type": ["ChemicalProperty"],
+                              "name": "Nitrogen"
+                            },
+                            "measurement": {
+                              "type": ["MeasuredValue"],
+                              "value": "00.00",
+                              "unitCode": "UNKNOWN"
+                            }
+                          },
+                          {
+                            "type": ["Observation"],
+                            "date": "2019-12-11T03:50:55Z",
+                            "property": {
+                              "type": ["ChemicalProperty"],
+                              "name": "Astatine"
+                            },
+                            "measurement": {
+                              "type": ["MeasuredValue"],
+                              "value": "39.189",
+                              "unitCode": "P1"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "purchase": {
+                      "type": ["Purchase"],
+                      "customer": {
+                        "type": ["Person"],
+                        "email": "Triston.Wehner28@example.com",
+                        "phoneNumber": "555-829-8193"
+                      }
+                    },
+                    "shipment": {
+                      "type": ["ParcelDelivery"],
+                      "deliveryAddress": {
+                        "type": ["PostalAddress"],
+                        "organizationName": "Luettgen - Conn",
+                        "streetAddress": "03845 Dylan Groves",
+                        "addressLocality": "Wittingfurt",
+                        "addressRegion": "Delaware",
+                        "postalCode": "77015-3992",
+                        "addressCountry": "Tuvalu"
+                      },
+                      "originAddress": {
+                        "type": ["PostalAddress"],
+                        "organizationName": "O'Hara, Klein and Ratke",
+                        "streetAddress": "603 Jerde Curve",
+                        "addressLocality": "Kubside",
+                        "addressRegion": "Indiana",
+                        "postalCode": "38144",
+                        "addressCountry": "Isle of Man"
+                      },
+                      "deliveryMethod": "Rail freight transport",
+                      "trackingNumber": "793845358389"
+                    }
+                  },
+                  "proof": {
+                    "type": "Ed25519Signature2018",
+                    "created": "2019-12-11T03:50:55Z",
+                    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..eYAe3tnAYLhfE7tbW6nVUeQclF63oi2Y8JK1Y9U5VTXx4l0Zo1qcsefsZvuwj3AhNZ1OisIwyTD-BccnOiXcBA",
+                    "proofPurpose": "assertionMethod",
+                    "verificationMethod": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U#z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U"
+                  }
+                },
+                {
+                  "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://w3id.org/traceability/v1"
+                  ],
+                  "id": "https://example.com/credential/123",
+                  "type": ["VerifiableCredential", "CommercialInvoiceCertificate"],
+                  "name": "Commercial Invoice Certificate",
+                  "description": "This document includes recommended commercial invoice fields.",
+                  "relatedLink": [
+                    {
+                      "type": ["LinkRole"],
+                      "target": "https://www.example.com/template/123",
+                      "linkRelationship": "templateLink"
+                    },
+                    {
+                      "type": ["LinkRole"],
+                      "target": "did:example:789",
+                      "linkRelationship": "billOfLadingLink"
+                    },
+                    {
+                      "type": ["LinkRole"],
+                      "target": "https://www.example.com/credentials/123",
+                      "linkRelationship": "millTestReportLink"
+                    }
+                  ],
+                  "issuanceDate": "2019-12-11T03:50:55Z",
+                  "issuer": {
+                    "id": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U",
+                    "type": "Organization",
+                    "name": "Waters Inc",
+                    "description": "Stand-alone executive benchmark",
+                    "address": {
+                      "type": "PostalAddress",
+                      "streetAddress": "027 Brakus Knoll",
+                      "addressLocality": "East Johnniemouth",
+                      "addressRegion": "Arizona",
+                      "postalCode": "25780-5840",
+                      "addressCountry": "Grenada"
+                    },
+                    "email": "Kendrick.Spinka57@example.org",
+                    "phoneNumber": "555-322-9464",
+                    "faxNumber": "555-766-1744"
+                  },
+                  "credentialSubject": {
+                    "type": ["CommercialInvoice"],
+                    "portOfEntry": {
+                      "type": ["PostalAddress"],
+                      "addressLocality": "Seatle",
+                      "addressRegion": "Washington",
+                      "addressCountry": "USA"
+                    },
+                    "destinationCountry": "MEX",
+                    "purchaseDate": "2021-02-21",
+                    "customer": {
+                      "type": ["Organization"],
+                      "address": {
+                        "type": ["PostalAddress"],
+                        "organizationName": "Generic Motors of America",
+                        "streetAddress": "12 Generic Motors Dr",
+                        "addressLocality": "Detroit",
+                        "addressRegion": "Michigain",
+                        "postalCode": "48232-5170",
+                        "addressCountry": "USA"
+                      }
+                    },
+                    "provider": {
+                      "type": ["Organization"],
+                      "address": {
+                        "type": ["PostalAddress"],
+                        "organizationName": "Aishi Metal Shinzo Co., Ltd.",
+                        "streetAddress": "1651, Shimonakano, Yoshida",
+                        "addressLocality": "Tsubame-shi",
+                        "addressRegion": "Niigata-ken",
+                        "postalCode": "959-0215",
+                        "addressCountry": "Japan"
+                      }
+                    },
+                    "totalPaymentDue": {
+                      "type": ["PriceSpecification"],
+                      "price": 150000,
+                      "priceCurrency": "USD"
+                    },
+                    "merchandise": [
+                      {
+                        "type": ["Product"],
+                        "manufacturer": { "type": ["Organization"] },
+                        "description": "UNS S30400 chromium-nickel stainless steel rolls.",
+                        "weight": {
+                          "type": ["QuantitativeValue"],
+                          "unitCode": "lbs",
+                          "value": "10000"
+                        },
+                        "quantity": "5",
+                        "priceSpecification": {
+                          "type": ["PriceSpecification"],
+                          "price": 10000,
+                          "priceCurrency": "USD"
+                        }
+                      },
+                      {
+                        "type": ["Product"],
+                        "manufacturer": { "type": ["Organization"] },
+                        "description": "Galvalannealed ASTM A-653 zinc-iron alloy-coated steel sheets.",
+                        "weight": {
+                          "type": ["QuantitativeValue"],
+                          "unitCode": "lbs",
+                          "value": "20000"
+                        },
+                        "quantity": "10",
+                        "priceSpecification": {
+                          "type": ["PriceSpecification"],
+                          "price": 10000,
+                          "priceCurrency": "USD"
+                        }
+                      }
+                    ]
+                  },
+                  "proof": {
+                    "type": "Ed25519Signature2018",
+                    "created": "2019-12-11T03:50:55Z",
+                    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..0Tzpy6qugNRix_Q7uGym1eAJ4gdBHX3NIbiewuTDsBjRbVi8ppHWxYQuf14knXckIeCyezFoejq_chd2MmVRBw",
+                    "proofPurpose": "assertionMethod",
+                    "verificationMethod": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U#z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U"
+                  }
+                },
+                {
+                  "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://w3id.org/traceability/v1"
+                  ],
+                  "id": "https://example.com/credential/123",
+                  "type": ["VerifiableCredential", "BillOfLadingCertificate"],
+                  "name": "Bill Of Lading Certificate",
+                  "description": "This document includes recommended bill of lading fields.",
+                  "relatedLink": [
+                    {
+                      "type": ["LinkRole"],
+                      "target": "did:example:789",
+                      "linkRelationship": "commercialInvoiceLink"
+                    },
+                    {
+                      "type": ["LinkRole"],
+                      "target": "https://www.example.com/template/123",
+                      "linkRelationship": "millTestReportLink"
+                    }
+                  ],
+                  "issuanceDate": "2019-12-11T03:50:55Z",
+                  "issuer": {
+                    "id": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U",
+                    "type": "Organization",
+                    "name": "Hauck Group",
+                    "description": "Focused secondary synergy",
+                    "address": {
+                      "type": "PostalAddress",
+                      "streetAddress": "3198 O'Kon Wall",
+                      "addressLocality": "North Adolphchester",
+                      "addressRegion": "Nevada",
+                      "postalCode": "50788",
+                      "addressCountry": "Cote d'Ivoire"
+                    },
+                    "email": "Bernita.Quitzon98@example.com",
+                    "phoneNumber": "555-171-4411",
+                    "faxNumber": "555-758-9761"
+                  },
+                  "credentialSubject": {
+                    "type": ["BillOfLading"],
+                    "billOfLadingNumber": "991205182A",
+                    "bookingNumber": "991205182",
+                    "relatedDocuments": [
+                      {
+                        "type": ["Purchase"],
+                        "customer": {
+                          "type": ["Person"],
+                          "email": "Deangelo56@example.org",
+                          "phoneNumber": "555-208-5866"
+                        }
+                      }
+                    ],
+                    "scac": "NISC",
+                    "carrier": {
+                      "type": ["Organization"],
+                      "email": "Adaline29@example.com",
+                      "phoneNumber": "+1 555-234-9983"
+                    },
+                    "consignor": {
+                      "type": ["Organization"],
+                      "email": "Idella60@example.org",
+                      "phoneNumber": "555-953-9479"
+                    },
+                    "consignee": {
+                      "type": ["Organization"],
+                      "email": "Victoria.Hane74@example.org",
+                      "phoneNumber": "555-455-9053"
+                    },
+                    "notify": {
+                      "type": ["Organization"],
+                      "email": "Florida91@example.net",
+                      "phoneNumber": "555-104-1126"
+                    },
+                    "freight": {
+                      "type": ["ParcelDelivery"],
+                      "deliveryAddress": {
+                        "type": ["PostalAddress"],
+                        "organizationName": "Goyette Inc",
+                        "streetAddress": "3685 Hessel Field",
+                        "addressLocality": "North Alexannemouth",
+                        "addressRegion": "Kansas",
+                        "postalCode": "67998",
+                        "addressCountry": "Denmark"
+                      },
+                      "originAddress": {
+                        "type": ["PostalAddress"],
+                        "organizationName": "Schaefer, Beer and O'Reilly",
+                        "streetAddress": "269 Aaliyah Trafficway",
+                        "addressLocality": "Caylaland",
+                        "addressRegion": "Maryland",
+                        "postalCode": "34283",
+                        "addressCountry": "Malta"
+                      },
+                      "deliveryMethod": "Truck transport",
+                      "trackingNumber": "128857427430"
+                    },
+                    "portOfLoading": { "unLocode": "USMOB" },
+                    "portOfDischarge": { "unLocode": "MXATM" }
+                  },
+                  "proof": {
+                    "type": "Ed25519Signature2018",
+                    "created": "2019-12-11T03:50:55Z",
+                    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..g9J070BT6vKDscw8nlQ9bSXc9ONbd9gIdtnqZ8d8HWQNYVyK-y6PygSoFOuUP9wdXd8QCQNcZpXI7Rgz_NtuCQ",
+                    "proofPurpose": "assertionMethod",
+                    "verificationMethod": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U#z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U"
+                  }
+                }
+              ],
+              "holder": "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn",
+              "proof": {
+                "type": "Ed25519Signature2018",
+                "created": "2022-01-09T22:54:46Z",
+                "verificationMethod": "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn",
+                "proofPurpose": "authentication",
+                "challenge": "4f9f1d2b-6e04-468e-8d90-59a53113509d",
+                "domain": "customs.example.gov",
+                "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..Eea18HAhNqVjjW78amnBKpKPQUG31_rpZBWgzZF8OeYFeHlWmjuB5rjnBF2VJxASRZzScSq-HAZuPSpVbbrnDw"
+              }
+            }            
+          </pre>
+        </section>
+
+        <section class="informative">
+          <h3>Step 4: Presentation Acknowledgement</h3>
+          <p>A verifier acknowledges workflow they initiated by providing a response in Step 2.</p>
+          <pre class="example nohighlight" title="A verifier (US Customs) acknowledges receipt and verifification of critical trade documents from a holder  (Acme Steel Inc.).">
+            {
+              "verified": true,
+              "credentials": {
+                "verified": true,
+                "results": [
+                  {
+                    "credentialId": "https://example.com/credential/123",
+                    "verified": true,
+                    "results": [
+                      {
+                        "proof": {
+                          "@context": [
+                            "https://www.w3.org/2018/credentials/v1",
+                            "https://w3id.org/traceability/v1"
+                          ],
+                          "type": "Ed25519Signature2018",
+                          "created": "2019-12-11T03:50:55Z",
+                          "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..eYAe3tnAYLhfE7tbW6nVUeQclF63oi2Y8JK1Y9U5VTXx4l0Zo1qcsefsZvuwj3AhNZ1OisIwyTD-BccnOiXcBA",
+                          "proofPurpose": "assertionMethod",
+                          "verificationMethod": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U#z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U"
+                        },
+                        "verified": true,
+                        "purposeResult": {
+                          "valid": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "credentialId": "https://example.com/credential/123",
+                    "verified": true,
+                    "results": [
+                      {
+                        "proof": {
+                          "@context": [
+                            "https://www.w3.org/2018/credentials/v1",
+                            "https://w3id.org/traceability/v1"
+                          ],
+                          "type": "Ed25519Signature2018",
+                          "created": "2019-12-11T03:50:55Z",
+                          "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..0Tzpy6qugNRix_Q7uGym1eAJ4gdBHX3NIbiewuTDsBjRbVi8ppHWxYQuf14knXckIeCyezFoejq_chd2MmVRBw",
+                          "proofPurpose": "assertionMethod",
+                          "verificationMethod": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U#z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U"
+                        },
+                        "verified": true,
+                        "purposeResult": {
+                          "valid": true
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "credentialId": "https://example.com/credential/123",
+                    "verified": true,
+                    "results": [
+                      {
+                        "proof": {
+                          "@context": [
+                            "https://www.w3.org/2018/credentials/v1",
+                            "https://w3id.org/traceability/v1"
+                          ],
+                          "type": "Ed25519Signature2018",
+                          "created": "2019-12-11T03:50:55Z",
+                          "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..g9J070BT6vKDscw8nlQ9bSXc9ONbd9gIdtnqZ8d8HWQNYVyK-y6PygSoFOuUP9wdXd8QCQNcZpXI7Rgz_NtuCQ",
+                          "proofPurpose": "assertionMethod",
+                          "verificationMethod": "did:key:z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U#z6MktHQo3fRRohk44dsbE76CuiTpBmyMWq2VVjvV6aBSeE3U"
+                        },
+                        "verified": true,
+                        "purposeResult": {
+                          "valid": true
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "presentation": {
+                "verified": true,
+                "results": [
+                  {
+                    "proof": {
+                      "@context": [
+                        "https://www.w3.org/2018/credentials/v1",
+                        "https://w3id.org/traceability/v1"
+                      ],
+                      "type": "Ed25519Signature2018",
+                      "created": "2022-01-09T22:54:46Z",
+                      "verificationMethod": "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn",
+                      "proofPurpose": "authentication",
+                      "challenge": "4f9f1d2b-6e04-468e-8d90-59a53113509d",
+                      "domain": "customs.example.gov",
+                      "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..Eea18HAhNqVjjW78amnBKpKPQUG31_rpZBWgzZF8OeYFeHlWmjuB5rjnBF2VJxASRZzScSq-HAZuPSpVbbrnDw"
+                    },
+                    "verified": true,
+                    "purposeResult": {
+                      "valid": true,
+                      "controller": {
+                        "@context": [
+                          "https://www.w3.org/ns/did/v1",
+                          "https://w3id.org/security/suites/ed25519-2018/v1",
+                          "https://w3id.org/security/suites/x25519-2019/v1"
+                        ],
+                        "id": "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn",
+                        "verificationMethod": [
+                          {
+                            "id": "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn",
+                            "type": "Ed25519VerificationKey2018",
+                            "controller": "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn",
+                            "publicKeyBase58": "FGBxEzuKWQ911zuvVkzEF8zzi6YqNV97UG5rzSeMoHtQ"
+                          },
+                          {
+                            "id": "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6LSt8Cke1XG6vthTpdek9xx6a5NKz8gEuYPQHJPhRjfREAC",
+                            "type": "X25519KeyAgreementKey2019",
+                            "controller": "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn",
+                            "publicKeyBase58": "HT2b7hiQ1UAxNSFtDWSzmyrtUqbZYJNEXJaiCy68hrPS"
+                          }
+                        ],
+                        "assertionMethod": [
+                          "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn"
+                        ],
+                        "authentication": [
+                          "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn"
+                        ],
+                        "capabilityInvocation": [
+                          "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn"
+                        ],
+                        "capabilityDelegation": [
+                          "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn"
+                        ],
+                        "keyAgreement": [
+                          "did:key:z6MktiSzqF9kqwdU8VkdBKx56EYzXfpgnNPUAGznpicNiWfn#z6LSt8Cke1XG6vthTpdek9xx6a5NKz8gEuYPQHJPhRjfREAC"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }            
+          </pre>
+        </section>
       </section>
     </section>
 
