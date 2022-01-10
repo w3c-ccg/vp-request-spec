@@ -261,31 +261,28 @@ types.
         </pre>
 
         <pre class="example nohighlight" title="A query by frame from a verifier">
-          {
-            "query": [
-              {
-                "type": "QueryByFrame",
-                "credentialQuery": {
-                  "frame": {
-                    "@context": [
-                      "https://www.w3.org/2018/credentials/v1",
-                      "https://w3id.org/vaccination/v1",
-                      "https://w3id.org/security/suites/bls12381-2020/v1"
-                    ],
-                    "type": ["VerifiableCredential", "VaccinationCertificate"],
-                    "credentialSubject": {
-                      "@explicit": true,
-                      "type": ["VaccinationEvent"],
-                      "batchNumber": {},
-                      "countryOfVaccination": {}
-                    }
-                  }
-                }
-              }
-            ],
-            "domain": "jobs.example.com",
-            "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
-          }          
+{
+  "query": [{
+    "type": "QueryByFrame",
+    "credentialQuery": {      
+      "frame": {
+        "@context": [ 
+          "https://www.w3.org/2018/credentials/v1",
+          "https://w3id.org/traceability/v1",
+        ],
+        "type": ["VerifiableCredential", "MillTestReportCertificate"],
+        "credentialSubject": {
+          "@explicit": true,
+          "type": ["MillTestReport"],
+          "product": {},
+          "manufacturer": {}
+        }
+      }
+    }
+  }],
+  "domain": "customs.example.gov",
+  "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
+}          
         </pre>
       </section>
 
