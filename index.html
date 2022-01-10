@@ -249,25 +249,15 @@ types.
       <section>
         <h3>Query By Frame</h3>
         <pre class="example nohighlight" title="A request for Query By Frame">
-          {
-            "query":
-              [
-                {
-                  "type": "RequestQueryByFrame",
-                  "credentialQuery":
-                    [
-                      {
-                        "type":
-                          [
-                              "VerifiableCredential",
-                              "VaccinationCertificate",
-                          ],
-                        "reason": "Wallet XYZ is ready to selectively disclose new credentials.",
-                      },
-                    ],
-                },
-              ],
-          }
+{
+  "query": [{
+    "type": "QueryByFrame",
+    "credentialQuery": [{
+      "reason": "Wallet XYZ is ready to selectively disclose new credentials.",
+      "frame": { ... }
+    }],
+  }]
+}
         </pre>
 
         <pre class="example nohighlight" title="A query by frame from a verifier">
