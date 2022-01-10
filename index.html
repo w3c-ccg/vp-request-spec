@@ -149,7 +149,7 @@ fit into/work with other protocols/messaging formats such as DIDComm.
     </section>
 
     <section class="normative">
-      <h2 id="format">Request Overview</h2>
+      <h2>Request Overview</h2>
 
       <p>
 To make a request for one or more objects wrapped in a Verifiable Presentation,
@@ -173,14 +173,21 @@ it wishes to perform from the receiver.
   recipients: [
     // an optional key agreement key for encrypting the response if
     // this is supported
-  ]
+  ],
+  interact: {
+    // an optional set of mechanisms that can be used to respond to the query
+    "service": [{
+      // a service that can be used to respond to the query where the service
+      // might be an HTTP endpoint, bluetooth location, or P2P protocol
+    }]
+  }
 }
       </pre>
 
     </section>
 
     <section class="normative">
-      <h2 id="format">Query Types</h2>
+      <h2>Query Types</h2>
 
       <p>
 The <a>query type</a> serves as the main extension point mechanism for
@@ -314,11 +321,60 @@ Capabilities or "zcaps" in the Verifiable Presentation.
 }
         </pre>
       </section>
+    </section>
+
+    <section class="normative">
+      <h2>Interaction Types</h2>
+
+      <p>
+The <a>interaction type</a> serves as the main extension point mechanism for
+ways of responding to a query.
+      </p>
+
+      <section>
+        <h3>Mediated Presentation</h3>
+
+        <p>
+A mediated presentation service requires an interaction by an entity,
+typically a person, that can interact with an interface.
+        </p>
+
+        <pre class="example nohighlight" title="A mediated presentation service that uses a Web browser">
+...
+"interact": {
+  "service": [{
+    "type": "MediatedBrowserPresentationService2021",
+    "serviceEndpoint": "https://degree.example/fill-out-forms?session=123456"
+  }]
+}
+...
+        </pre>
+      </section>
+
+      <section>
+        <h3>Unmediated Presentation</h3>
+
+        <p>
+An unmediated presentation service can process a presentation in an entirely
+automated fashion.
+        </p>
+
+        <pre class="example nohighlight" title="An unmediated presentation service that utilizes HTTP">
+...
+"interact": {
+  "service": [{
+    "type": "UnmediatedHttpPresentationService2021",
+    "serviceEndpoint": "https://degree.example/active-flows/123456"
+  }]
+}
+...
+        </pre>
+      </section>
 
     </section>
 
     <section class="normative">
-      <h2 id="format">Usage Scenarios</h2>
+      <h2>Usage Scenarios</h2>
 
       <p>
 This request query format is intended to be used in a variety of protocols and
