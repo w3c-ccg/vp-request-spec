@@ -412,6 +412,32 @@ Provider interaction mechanism.
       </section>
 
       <section>
+        <h3>DIDCommv2 Presentation</h3>
+
+        <p>
+A mediated presentation service that utilizes the DIDCommv2 interaction
+mechanism.
+        </p>
+
+        <pre class="example nohighlight" title="A mediated presentation service that uses a Web browser">
+...
+"interact": {
+  "service": [{
+    "id": "did:example:123456789abcdefghi#didcomm-1",
+    "type": "DIDCommMessaging",
+    "serviceEndpoint": "http://example.com/path",
+    "accept": [
+       "didcomm/v2",
+       "didcomm/aip2;env=rfc587"
+     ],
+     "routingKeys": ["did:example:somemediator#somekey"]
+  }]
+}
+...
+        </pre>
+      </section>
+
+      <section>
         <h3>Unmediated Presentation</h3>
 
         <p>
