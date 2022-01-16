@@ -392,6 +392,26 @@ interface, for example, a person using a Web browser.
       </section>
 
       <section>
+        <h3>OIDC Credential Provider</h3>
+
+        <p>
+A mediated presentation service that utilizes the Open ID Connect Credential
+Provider interaction mechanism.
+        </p>
+
+        <pre class="example nohighlight" title="A mediated presentation service that uses a Web browser">
+...
+"interact": {
+  "service": [{
+    "type": "OpenIdConnectCredentialProviderService2021",
+    "serviceEndpoint": "https://degree.example/authorize?response_type=code&scope=openid%20openid_credential&client_id=s6BhdRkqt3&state=af0ifjsldkj&redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb&credential_format=w3cvc-jsonld"
+  }]
+}
+...
+        </pre>
+      </section>
+
+      <section>
         <h3>Unmediated Presentation</h3>
 
         <p>
