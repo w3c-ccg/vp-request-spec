@@ -247,6 +247,46 @@ types.
       </section>
 
       <section>
+        <h3>Query By Frame</h3>
+        <pre class="example nohighlight" title="A request for Query By Frame">
+{
+  "query": [{
+    "type": "QueryByFrame",
+    "credentialQuery": [{
+      "reason": "Wallet XYZ is ready to selectively disclose new credentials.",
+      "frame": { ... }
+    }],
+  }]
+}
+        </pre>
+
+        <pre class="example nohighlight" title="A query by frame from a verifier">
+{
+  "query": [{
+    "type": "QueryByFrame",
+    "credentialQuery": {      
+      "frame": {
+        "@context": [ 
+          "https://www.w3.org/2018/credentials/v1",
+          "https://w3id.org/traceability/v1",
+        ],
+        "type": ["VerifiableCredential", "MillTestReportCertificate"],
+        "credentialSubject": {
+          "@explicit": true,
+          "type": ["MillTestReport"],
+          "product": {},
+          "manufacturer": {}
+        }
+      }
+    }
+  }],
+  "domain": "customs.example.gov",
+  "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
+}          
+        </pre>
+      </section>
+
+      <section>
         <h3>DID Authentication Request</h3>
 
         <pre class="example nohighlight" title="A DIDAuth request">
@@ -485,17 +525,126 @@ null // if the user cancels
         <h3>Mobile Applications</h3>
 
         <p>
-TBD
         </p>
+        
       </section>
 
       <section class="informative">
         <h3>Peer to Peer</h3>
 
-        <p>
-TBD. (The intention of this spec is to align the query format with existing
-protocols and messaging formats such as DIDComm.)
-        </p>
+        <section class="informative">
+          <h3>Machine to Machine</h3>
+          
+          <p>These APIs do not require browser polyfills and can be used with or
+             without channel authorization schemes such as access tokens provided by OAuth 2.0 Client Credentials.</p>
+
+          <section class="informative">
+            <h3>Step 1: Notification Request</h3>
+            <p>A presentation exchange workflow starts when a holder notifies a verifier of an intent to present credentials.</p>
+            <p>This is the begining of a 1-1 workflow between a holder and a verifier, 
+              where a holder notifies the verify what they indend to present,
+            and the verifier queries the holder for specific credentials that will satisfy the verifier for the given request.</p>
+
+            <pre class="example nohighlight" title="A manufacturer intends to submit trade data to US Customs.">
+{
+  "query":
+    [
+      {
+        "type": "RequestQueryByExample",
+        "credentialQuery":
+          [
+            {
+              "type":
+                [
+                    "VerifiableCredential",
+                    "MillTestReportCertificate",
+                ],
+              "reason": "Acme Steel Inc. is ready to present certificate of origin for a steel import.",
+            },
+          ],
+      },
+    ],
+}
+            </pre>
+          </section>
+
+          <section class="informative">
+            <h3>Step 2: Notification Response</h3>
+            <p>A verifier responds with a <a href="#query-by-example">QueryByExample</a> or a <a href="#query-by-frame">QueryByFrame</a></p>
+<pre class="example nohighlight" title="A verifier (US Customs) requests auxillary credentials.">
+  {
+    "query": [
+      {
+        "type": "QueryByExample",
+        "credentialQuery": {
+          "example": {
+            "@context": [
+              "https://www.w3.org/2018/credentials/v1",
+              "https://w3id.org/traceability/v1"
+            ],
+            "type": ["VerifiableCredential", "MillTestReportCertificate", "CommercialInvoiceCertificate", "BillOfLadingCertificate"]
+          }
+        }
+      }
+    ],
+    "domain": "customs.example.gov",
+    "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
+  }       
+</pre>
+          </section>
+        </section>
+
+        <section class="informative">
+          <h3>Step 3: Presentation Submission</h3>
+          <p>A holder completes the workflow they initiated by submitting a 
+            <a href="https://www.w3.org/TR/vc-data-model/#presentations">Verifiable Presentation</a>
+            over the challenge and optionally the domain obtained from Step 2.
+          </p>
+          <pre class="example nohighlight" title="A holder (Acme Steel Inc.) submits supply chain traceability credentials to a verifier that is a regulator (US Customs).">
+            {
+              "@context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://w3id.org/traceability/v1"
+              ],
+              "type": ["VerifiablePresentation"],
+              "holder": "did:example:123",
+              "verifiableCredential": [
+                {
+                  ...
+                  "id": "https://example.com/credential/123",
+                  "type": ["VerifiableCredential", "MillTestReportCertificate"],
+                  ...
+                },
+                {
+                  ...
+                  "id": "https://example.com/credential/456",
+                  "type": ["VerifiableCredential", "CommercialInvoiceCertificate"],
+                  ...
+                },
+                {
+                  ...
+                  "id": "https://example.com/credential/789",
+                  "type": ["VerifiableCredential", "BillOfLadingCertificate"],
+                  ...
+                }
+              ],
+              "proof": {
+               ...
+              }
+            }            
+          </pre>
+        </section>
+
+        <section class="informative">
+          <h3>Step 4: Presentation Acknowledgement</h3>
+          <p>A verifier acknowledges workflow they initiated by providing a response in Step 2.</p>
+          <pre class="example nohighlight" title="A verifier (US Customs) acknowledges receipt and verifification of critical trade documents from a holder  (Acme Steel Inc.).">
+            {
+              "verified": true,
+              ...
+            }            
+          </pre>
+        </section>
       </section>
     </section>
 
