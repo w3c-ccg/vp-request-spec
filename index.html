@@ -504,13 +504,27 @@ be signed.
 CHAPI provides a single derived class, the <code>WebCredential</code> that forms
 the basis for any sort of credential data that is provided over the Web, i.e.,
 via a "Credential Handler" that a origin has registered in the user's browser
-when the user visited that origin's website.
+when the user visited that origin's website. Note that CHAPI provides an
+optional <code>recommendedHandlerOrigins</code> feature for any credential
+storage request to allow a Relying Party (aka issuer) to suggest one or more
+digital wallets to help the user store the credential. This is particularly
+helpful if the user has no wallet yet. The listed origins must have a
+`manifest.json` file with a valid `credential_handler` entry in order to
+be used by CHAPI.
           </p>
 
           <pre class="example nohighlight" title="Creating a WebCredential instance.">
+// optionally include `recommendedHandlerOrigins` so the user can choose an
+// applicable wallet if they don't have one yet:
+const options = {
+  recommendedHandlerOrigins: [
+    'https://wallet.example'
+  ]
+};
 const webCredential = new WebCredential('VerifiablePresentation', {
   '@context': 'https://www.w3.org/2018/credentials/v1',
-  ...presentation
+  ...presentation,
+  options
 });
           </pre>
         </section>
@@ -533,7 +547,14 @@ possible).
 A web app (a Relying Party or verifier) can request a credential using
 <code>credentials.get()</code> during a user gesture event, for example when
 the user pushes a button on a page that requires identity attributes or
-authentication.
+authentication. Note that CHAPI provides an optional
+<code>recommendedHandlerOrigins</code> feature for any credential
+request (not specific or restricted to VPR) to allow a Relying Party
+(aka verifier) to suggest one or more digital wallets to help the user
+complete the request. This is particularly helpful if the user has no
+wallet yet. The listed origins must have a
+`manifest.json` file with a valid `credential_handler` entry in order to
+be used by CHAPI.
           </p>
 
           <pre class="example nohighlight" title="Example get() request.">
@@ -563,7 +584,14 @@ const credentialQuery = {
       // proof that will be attached to the VerifiablePresentation
       // response, identifying the recipient
       domain: 'jobs.example.com'
-    }
+    },
+    // optionally include credential handler origins to recommend to
+    // the user if they have no wallet or may want to choose one
+    // the RP recommends; this is an optional CHAPI feature, it is not
+    // specific to VPR
+    recommendedHandlerOrigins: [
+      'https://wallet.example'
+    ]
   }
 };
 const webCredential = await navigator.credentials.get(credentialQuery);
