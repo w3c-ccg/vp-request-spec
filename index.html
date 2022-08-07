@@ -188,6 +188,9 @@ it wishes to perform from the receiver.
 
       </section>
 
+      <section id="conformance">
+      </section>
+
       <section class="informative">
         <h2>Terminology</h2>
 
@@ -411,22 +414,23 @@ Credential Handler API (CHAPI):
 
           <p>
 The next example demonstrates that the <a>verifier</a> would like the
-<a>holder</a> to utilize the DID Web Method and the 2022 EdDSA cryptography
-suite, and optionally also include a cryptographic proof that they are capable
-of performing a 2022 BBS proof, and authenticate over a different communication
-channel, in this case utilising a Verifiable Credential API HTTP endpoint:
+<a>holder</a> to utilize either the DID Key or DID Web Method and the 2022 EdDSA
+cryptography suite, and optionally also include a cryptographic proof that they
+are capable of performing a 2022 BBS proof, and authenticate over a different
+communication channel, in this case utilising a Verifiable Credential API HTTP
+endpoint:
           </p>
 
           <pre class="example" title="A complex DID Authentication request">
 {
   "query": [{
     "type": "DidAuthentication",
-    "didMethod": "web",
+    "didMethod": ["key", "web"],
     "cryptosuite": "ecdsa-2022"
   }, {
     "type": "DidAuthentication",
     "required": false,
-    "didMethod": "web",
+    "didMethod": ["key", "web"],
     "cryptosuite": "bbs-2022"
   }],
   "challenge": "zLEwtBYgQVNR4tyeo",
