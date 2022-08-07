@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Verifiable Presentation Request Specification v0.1</title>
+    <title>Verifiable Presentation Request v0.2</title>
     <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
     <!--
       === NOTA BENE ===
       For the three scripts below, if your spec resides on dev.w3 you can check them
       out in the same tree and use relative links so that they'll work offline,
      -->
-    <script src='https://www.w3.org/Tools/respec/respec-w3c-common' class='remove'></script>
+    <script src='https://www.w3.org/Tools/respec/respec-w3c' class='remove'></script>
     <script src="./common.js" class="remove"></script>
     <script type="text/javascript" class="remove">
       var respecConfig = {
@@ -67,12 +67,16 @@
         ],
         // name of the WG
         wg:           "W3C Credentials Community Group",
+        group: "credentials",
 
         // URI of the public WG page
         wgURI:        "https://w3c-ccg.github.io/",
 
         // name (with the @w3c.org) of the public mailing to which comments are due
         wgPublicList: "public-credentials",
+
+        lint: {"no-unused-dfns": false},
+        postProcess: [restrictRefs],
 
         // URI of the patent status for this WG, for Rec-track documents
         // !!!! IMPORTANT !!!!
@@ -146,18 +150,16 @@ Additionally, the intention is to align this spec and the query format to
 fit into/work with other protocols/messaging formats such as DIDComm.
       </p>
 
-    </section>
+      <section class="informative">
+        <h2>Overview</h2>
 
-    <section class="normative">
-      <h2>Request Overview</h2>
-
-      <p>
+        <p>
 To make a request for one or more objects wrapped in a Verifiable Presentation,
-a <a>client</a> constructs a JSON request describing one or more queries that
+a client constructs a JSON request describing one or more queries that
 it wishes to perform from the receiver.
-      </p>
+        </p>
 
-      <pre class="example nohighlight" title="A sample query">
+        <pre class="example nohighlight" title="A sample query">
 {
   query: [{
     type: 'APopularQueryType',
@@ -182,15 +184,22 @@ it wishes to perform from the receiver.
     }]
   }
 }
-      </pre>
+        </pre>
 
+      </section>
+
+      <section class="informative">
+        <h2>Terminology</h2>
+
+        <div data-include="https://raw.githubusercontent.com/w3c/vc-data-model/v2.0/terms.html"></div>
+      </section>
     </section>
 
     <section class="normative">
       <h2>Query Types</h2>
 
       <p>
-The <a>query type</a> serves as the main extension point mechanism for
+The <dfn>query type</dfn> serves as the main extension point mechanism for
 requests for data in the presentation. This document defines several common query
 types.
       </p>
@@ -367,7 +376,7 @@ Capabilities or "zcaps" in the Verifiable Presentation.
       <h2>Interaction Types</h2>
 
       <p>
-The <a>interaction type</a> serves as the main extension point mechanism for
+The <dfn>interaction type</dfn> serves as the main extension point mechanism for
 ways of responding to a query.
       </p>
 
