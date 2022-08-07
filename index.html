@@ -271,9 +271,9 @@ types.
 {
   "query": [{
     "type": "QueryByFrame",
-    "credentialQuery": {      
+    "credentialQuery": {
       "frame": {
-        "@context": [ 
+        "@context": [
           "https://www.w3.org/2018/credentials/v1",
           "https://w3id.org/traceability/v1",
         ],
@@ -289,7 +289,7 @@ types.
   }],
   "domain": "customs.example.gov",
   "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
-}          
+}
         </pre>
       </section>
 
@@ -656,7 +656,7 @@ null // if the user cancels
 
         <p>
         </p>
-        
+
       </section>
 
       <section class="informative">
@@ -664,14 +664,14 @@ null // if the user cancels
 
         <section class="informative">
           <h3>Machine to Machine</h3>
-          
+
           <p>These APIs do not require browser polyfills and can be used with or
              without channel authorization schemes such as access tokens provided by OAuth 2.0 Client Credentials.</p>
 
           <section class="informative">
             <h3>Step 1: Notification Request</h3>
             <p>A presentation exchange workflow starts when a holder notifies a verifier of an intent to present credentials.</p>
-            <p>This is the begining of a 1-1 workflow between a holder and a verifier, 
+            <p>This is the begining of a 1-1 workflow between a holder and a verifier,
               where a holder notifies the verify what they indend to present,
             and the verifier queries the holder for specific credentials that will satisfy the verifier for the given request.</p>
 
@@ -719,14 +719,14 @@ null // if the user cancels
     ],
     "domain": "customs.example.gov",
     "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
-  }       
+  }
 </pre>
           </section>
         </section>
 
         <section class="informative">
           <h3>Step 3: Presentation Submission</h3>
-          <p>A holder completes the workflow they initiated by submitting a 
+          <p>A holder completes the workflow they initiated by submitting a
             <a href="https://www.w3.org/TR/vc-data-model/#presentations">Verifiable Presentation</a>
             over the challenge and optionally the domain obtained from Step 2.
           </p>
@@ -761,7 +761,7 @@ null // if the user cancels
               "proof": {
                ...
               }
-            }            
+            }
           </pre>
         </section>
 
@@ -772,7 +772,7 @@ null // if the user cancels
             {
               "verified": true,
               ...
-            }            
+            }
           </pre>
         </section>
       </section>
