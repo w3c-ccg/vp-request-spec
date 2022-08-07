@@ -346,6 +346,102 @@ by providing the following response:
   }
 }
         </pre>
+
+        <section>
+          <h3>The DID Authentication Query Format</h3>
+
+          <p>
+The DID Authentication query format enables a <a>verifier</a> to request that a
+<a>holder</a> authentication in specific ways. A DID Authentication query
+MUST be of the following form:
+          </p>
+          <table class="simple">
+            <tr>
+              <th>Property</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>type</td>
+              <td>
+a REQUIRED string value that MUST be set to <code>DIDAuthentication</code>.
+              </td>
+            </tr>
+            <tr>
+              <td>didMethod</td>
+              <td>
+An optional set of one or more values that conveys the DID Methods that are
+supported by the <a>verifier</a>. If only one DID Method is listed, the value
+MUST be a string containing the DID Method name. If more than one DID Method is
+listed, the value MUST be an array of string values and each string value
+MUST be a string containing the DID Method name. Listing multiple values
+expresses that the <a>verifier</a> would accept any DID Method listed. Valid
+example values include: <code>"key"</code> and <code>["key", "web"]</code>.
+              </td>
+            </tr>
+            <tr>
+              <td>cryptosuite</td>
+              <td>
+An optional string value that conveys a cryptography suite that MUST be
+used by the <a>holder</a> to generate a cryptographic proof. Valid example
+values include: <code>"eddsa-2022"</code>, <code>"ecdsa-2022"</code> and
+<code>"bbs-2022"</code>.
+              </td>
+            </tr>
+          </table>
+
+          <p>
+The following example demonstrates that the <a>verifier</a> would like the
+<a>holder</a> to utilize the DID Web Method and the 2022 ECDSA cryptography
+suite to authenticate over the established communication channel, such as the
+Credential Handler API (CHAPI):
+          </p>
+
+          <pre class="example"
+            title="A DID Authentication request using did:web and ecdsa-2022">
+{
+  "query": [{
+    "type": "DidAuthentication",
+    "didMethod": "web",
+    "cryptosuite": "ecdsa-2022"
+  }],
+  "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
+  "domain": "example.com"
+}
+          </pre>
+
+          <p>
+The next example demonstrates that the <a>verifier</a> would like the
+<a>holder</a> to utilize the DID Web Method and the 2022 EdDSA cryptography
+suite, and optionally also include a cryptographic proof that they are capable
+of performing a 2022 BBS proof, and authenticate over a different communication
+channel, in this case utilising a Verifiable Credential API HTTP endpoint:
+          </p>
+
+          <pre class="example" title="A complex DID Authentication request">
+{
+  "query": [{
+    "type": "DidAuthentication",
+    "didMethod": "web",
+    "cryptosuite": "ecdsa-2022"
+  }, {
+    "type": "DidAuthentication",
+    "required": false,
+    "didMethod": "web",
+    "cryptosuite": "bbs-2022"
+  }],
+  "challenge": "zLEwtBYgQVNR4tyeo",
+  "domain": "didauth.example",
+  "interact": {
+    "service": [{
+      "type": "UnmediatedHttpPresentationService2021",
+      "serviceEndpoint": "https://didauth.example/exchanges/zYRo25k7G2UVWkrNt"
+    }]
+  }
+}
+          </pre>
+
+        </section>
+
       </section>
 
       <section>
