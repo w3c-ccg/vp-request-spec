@@ -196,7 +196,7 @@ it wishes to perform from the receiver.
     </section>
 
     <section class="normative">
-      <h2>Query Types</h2>
+      <h2>Query and Response Types</h2>
 
       <p>
 The <dfn>query type</dfn> serves as the main extension point mechanism for
@@ -303,33 +303,46 @@ types.
       </section>
 
       <section>
-        <h3>DID Authentication Request</h3>
+        <h3>DID Authentication</h3>
 
-        <pre class="example nohighlight" title="A DIDAuth request">
+        <p>
+This section defines how a <a>verifier</a> can request that a
+<a>holder</a> performs a Decentralized Identifier-based Authentication
+[[?DID-CORE]]. In its simplest form, the authentication protocol is comprised
+of a challenge by the <a>verifier</a> and a response by a <a>holder</a>:
+        </p>
+
+        <pre class="example" title="A DID Authentication request">
 {
-  query: [{
-    type: 'DIDAuth'
+  "query": [{
+    "type": "DidAuthentication"
   }],
-  challenge: '99612b24-63d9-11ea-b99f-4f66f3e4f81a',
-  domain: 'example.com'
+  "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
+  "domain": "example.com"
 }
         </pre>
 
-        <p>Response:</p>
+        <p>
+The DID Authentication request above specifies that the <a>verifier</a> would
+like the <a>holder</a> to demonstrate control over a DID by generating a
+digital signature over the provided challenge. The <a>holder</a> might respond
+by providing the following response:
+        </p>
 
-        <pre class="example nohighlight" title="A DIDAuth response">
+        <pre class="example" title="A DID Authentication response">
 {
-  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "@context": ["https://www.w3.org/2022/credentials/v2"],
   "type": "VerifiablePresentation",
   "holder": "did:example:12345",
   "proof": {
-    "proofPurpose": "authentication",
-    "type": "Ed25519Signature2018",
+    "type": "DataIntegritySignature",
+    "cryptosuite": "eddsa-2022",
+    "verificationMethod": "did:example:12345#key-1",
     "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
     "domain": "example.com",
-    "created": "2020-06-06T21:05:13Z",
-    "verificationMethod": "did:example:12345#z6Mkkg...",
-    "jws": "..."
+    "created": "2022-02-25T14:58:42Z",
+    "proofPurpose": "authentication",
+    "proofValue": "z3FXQjecWufY46...UAUL5n2Brbx"
   }
 }
         </pre>
