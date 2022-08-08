@@ -310,7 +310,7 @@ types.
 
         <p>
 This section defines how a <a>verifier</a> can request that a
-<a>holder</a> performs a Decentralized Identifier-based Authentication
+<a>holder</a> perform Decentralized Identifier-based Authentication
 [[?DID-CORE]]. In its simplest form, the authentication protocol is comprised
 of a challenge by the <a>verifier</a> and a response by a <a>holder</a>:
         </p>
@@ -354,8 +354,8 @@ by providing the following response:
           <h3>The DID Authentication Query Format</h3>
 
           <p>
-The DID Authentication query format enables a <a>verifier</a> to request that a
-<a>holder</a> authentication in specific ways. A DID Authentication query
+The DID Authentication query format enables a <a>verifier</a> to request a
+<a>holder</a> to authenticate in specific ways. A DID Authentication query
 MUST be of the following form:
           </p>
           <table class="simple">
@@ -417,7 +417,7 @@ The next example demonstrates that the <a>verifier</a> would like the
 <a>holder</a> to utilize either the DID Key or DID Web Method and the 2022 EdDSA
 cryptography suite, and optionally also include a cryptographic proof that they
 are capable of performing a 2022 BBS proof, and authenticate over a different
-communication channel, in this case utilising a Verifiable Credential API HTTP
+communication channel, in this case utilizing a Verifiable Credential API HTTP
 endpoint:
           </p>
 
@@ -478,7 +478,7 @@ type that was requested in the DID Authentication query.
 a REQUIRED value that MUST be one or more specific digital proof types that
 were requested in the DID Authentication query. Each proof object MUST
 include the `domain` and `challenge` value that was provided in the DID
-Authentication query. Implementations MUST ensure that the `domain` specified
+Authentication query. <a>Holder</a> implementations MUST ensure that the `domain` specified
 by the <a>verifier</a> matches the domain used for the current channel of
 communication.
               </td>
@@ -486,7 +486,7 @@ communication.
         </table>
 
         <p class="advisement">
-It is vital that an implementation checks the `domain` provided by the
+It is vital that a <a>holder</a> implementation checks the `domain` provided by the
 `verifier` against the domain used for the current channel of communication. If
 this is not done, a dishonest <a>verifier</a> could then replay the message
 to a domain that is not their own. For example, a dishonest <a>verifier</a>
