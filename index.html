@@ -446,6 +446,79 @@ endpoint:
 
         </section>
 
+        <section>
+          <h3>The DID Authentication Response Format</h3>
+
+          <p>
+The DID Authentication response format format enables a <a>holder</a> to
+provide the information requested by the <a>verifier</a>. A DID Authentication
+response MUST be a <a>verifiable presentation</a> of the following form:
+          </p>
+          <table class="simple">
+            <tr>
+              <th>Property</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>type</td>
+              <td>
+a REQUIRED string value that MUST be set to <code>VerifiablePresentation</code>.
+              </td>
+            </tr>
+            <tr>
+              <td>holder</td>
+              <td>
+a REQUIRED string value that MUST be set to a specific DID that is of the
+type that was requested in the DID Authentication query.
+              </td>
+            </tr>
+            <tr>
+              <td>proof</td>
+              <td>
+a REQUIRED value that MUST be one or more specific digital proof types that
+were requested in the DID Authentication query. Each proof object MUST
+include the `domain` and `challenge` value that was provided in the DID
+Authentication query. Implementations MUST ensure that the `domain` specified
+by the <a>verifier</a> matches the domain used for the current channel of
+communication.
+              </td>
+            </tr>
+        </table>
+
+        <p class="advisement">
+It is vital that an implementation checks the `domain` provided by the
+`verifier` against the domain used for the current channel of communication. If
+this is not done, a dishonest <a>verifier</a> could then replay the message
+to a domain that is not their own. For example, a dishonest <a>verifier</a>
+operating from the `evil.example` domain could retrieve a challenge from your
+bank, specify a domain value of `yourbank.example`, and then replay
+your response to your bank to get access to your financial accounts. This
+attack is mitigated as long as implementations ensure that the appropriate
+domain is used when generating the <a>verifiable presentation</a>.
+        </p>
+
+        <p>
+The example below demonstrates a simple DID Authentication response.
+        </p>
+
+        <pre class="example"
+          title="A DID Authentication response using did:key">
+{
+  "@context": ["https://www.w3.org/2022/credentials/v2"],
+  "type": "VerifiablePresentation",
+  "holder": "did:example:12345",
+  "proof": {
+    "type": "DataIntegritySignature",
+    "cryptosuite": "eddsa-2022",
+    "verificationMethod": "did:example:12345#key-1",
+    "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
+    "domain": "example.com",
+    "created": "2022-02-25T14:58:42Z",
+    "proofPurpose": "authentication",
+    "proofValue": "z3FXQjecWufY46...UAUL5n2Brbx"
+  }
+}
+        </pre>
       </section>
 
       <section>
@@ -484,6 +557,7 @@ Capabilities or "zcaps" in the Verifiable Presentation.
         </pre>
       </section>
     </section>
+  </section>
 
     <section class="normative">
       <h2>Interaction Types</h2>
