@@ -355,9 +355,9 @@ by providing the following response:
           <h3>The DID Authentication Query Format</h3>
 
           <p>
-The DID Authentication query format enables a <a>verifier</a> to request a
-<a>holder</a> to authenticate in specific ways. A DID Authentication query
-MUST be of the following form:
+The DID Authentication query format enables a <a>verifier</a> to request that
+a <a>holder</a> authenticate in specific ways. A DID Authentication query MUST
+be of the following form:
           </p>
           <table class="simple">
             <tr>
@@ -394,7 +394,7 @@ values include: <code>"eddsa-2022"</code>, <code>"ecdsa-2022"</code> and
 
           <p>
 The following example demonstrates that the <a>verifier</a> would like the
-<a>holder</a> to utilize the DID Web Method and the 2022 ECDSA cryptography
+<a>holder</a> to utilize the DID Web method and the 2022 ECDSA cryptography
 suite to authenticate over the established communication channel, such as the
 Credential Handler API (CHAPI):
           </p>
@@ -414,7 +414,7 @@ Credential Handler API (CHAPI):
 
           <p>
 The next example demonstrates that the <a>verifier</a> would like the
-<a>holder</a> to utilize either the DID Key or DID Web Method and the 2022 EdDSA
+<a>holder</a> to utilize either the DID Key or DID Web method, and the 2022 EdDSA
 cryptography suite, and optionally also include a cryptographic proof that they
 are capable of performing a 2022 BBS proof, and authenticate over a different
 communication channel, in this case utilizing a Verifiable Credential API HTTP
@@ -450,7 +450,7 @@ endpoint:
           <h3>The DID Authentication Response Format</h3>
 
           <p>
-The DID Authentication response format format enables a <a>holder</a> to
+The DID Authentication response format enables a <a>holder</a> to
 provide the information requested by the <a>verifier</a>. A DID Authentication
 response MUST be a <a>verifiable presentation</a> of the following form:
           </p>
@@ -477,7 +477,7 @@ type that was requested in the DID Authentication query.
               <td>
 a REQUIRED value that MUST be one or more specific digital proof types that
 were requested in the DID Authentication query. Each proof object MUST
-include the `domain` and `challenge` value that was provided in the DID
+include the `domain` and `challenge` values that were provided in the DID
 Authentication query. <a>Holder</a> implementations MUST ensure that the `domain` specified
 by the <a>verifier</a> matches the domain used for the current channel of
 communication.
@@ -486,7 +486,7 @@ communication.
         </table>
 
         <p class="advisement">
-It is vital that a <a>holder</a> implementation checks the `domain` provided by the
+It is vital that a <a>holder</a> implementation check the `domain` provided by the
 `verifier` against the domain used for the current channel of communication. If
 this is not done, a dishonest <a>verifier</a> could then replay the message
 to a domain that is not their own. For example, a dishonest <a>verifier</a>
