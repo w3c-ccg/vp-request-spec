@@ -319,6 +319,7 @@ of a challenge by the <a>verifier</a> and a response by a <a>holder</a>:
 {
   "query": [{
     "type": "DidAuthentication"
+    "acceptedMethods": [{"method": "example"}]
   }],
   "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
   "domain": "example.com"
@@ -370,15 +371,14 @@ a REQUIRED string value that MUST be set to <code>DIDAuthentication</code>.
               </td>
             </tr>
             <tr>
-              <td>didMethod</td>
+              <td>acceptedMethods</td>
               <td>
-An optional set of one or more values that conveys the DID Methods that are
-supported by the <a>verifier</a>. If only one DID Method is listed, the value
-MUST be a string containing the DID Method name. If more than one DID Method is
-listed, the value MUST be an array of string values and each string value
-MUST be a string containing the DID Method name. Listing multiple values
-expresses that the <a>verifier</a> would accept any DID Method listed. Valid
-example values include: <code>"key"</code> and <code>["key", "web"]</code>.
+An optional array of objects that expresses the <a>verifier</a> would accept
+any DID Method listed. Each object in the array MUST contain a property called
+`method` with a value that is a DID Method name, and MAY contain other
+properties that are specific to the DID Method. Valid example values
+include: <code>[{"method": "key"}]</code> and
+<code>[{"method": "key"}, {"method": "web"}]</code>.
               </td>
             </tr>
             <tr>
@@ -404,7 +404,7 @@ Credential Handler API (CHAPI):
 {
   "query": [{
     "type": "DidAuthentication",
-    "didMethod": "web",
+    "acceptedMethods": [{"method": "key"}],
     "cryptosuite": "ecdsa-2022"
   }],
   "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
@@ -425,12 +425,12 @@ endpoint:
 {
   "query": [{
     "type": "DidAuthentication",
-    "didMethod": ["key", "web"],
+    "acceptedMethods": [{"method": "key"}, {"method": "web"}],
     "cryptosuite": "ecdsa-2022"
   }, {
     "type": "DidAuthentication",
     "required": false,
-    "didMethod": ["key", "web"],
+    "acceptedMethods": [{"method": "key"}, {"method": "web"}],
     "cryptosuite": "bbs-2022"
   }],
   "challenge": "zLEwtBYgQVNR4tyeo",
