@@ -318,7 +318,7 @@ of a challenge by the <a>verifier</a> and a response by a <a>holder</a>:
         <pre class="example" title="A DID Authentication request">
 {
   "query": [{
-    "type": "DidAuthentication"
+    "type": "DidAuthentication",
     "acceptedMethods": [{"method": "example"}]
   }],
   "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
@@ -339,7 +339,7 @@ by providing the following response:
   "type": "VerifiablePresentation",
   "holder": "did:example:12345",
   "proof": {
-    "type": "DataIntegritySignature",
+    "type": "DataIntegrityProof",
     "cryptosuite": "eddsa-2022",
     "verificationMethod": "did:example:12345#key-1",
     "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
@@ -350,6 +350,13 @@ by providing the following response:
   }
 }
         </pre>
+
+        <p class="issue">
+The DID Authentication examples shown in this document use a new proof type
+called `DataIntegrityProof` which is currently under development in the
+<a href="https://www.w3.org/2017/vc/WG/">W3C Verifiable Credentials Working
+Group</a>.
+        </p>
 
         <section>
           <h3>The DID Authentication Query Format</h3>
@@ -382,12 +389,15 @@ include: <code>[{"method": "key"}]</code> and
               </td>
             </tr>
             <tr>
-              <td>cryptosuite</td>
+              <td>acceptedCryptosuites</td>
               <td>
-An optional string value that conveys a cryptography suite that MUST be
-used by the <a>holder</a> to generate a cryptographic proof. Valid example
-values include: <code>"eddsa-2022"</code>, <code>"ecdsa-2022"</code> and
-<code>"bbs-2022"</code>.
+An optional array of objects that conveys the cryptography suites that MUST be
+used by the <a>holder</a> to generate a cryptographic proof. Each object in the
+array MUST contain a property called `cryptosuite` with a value that is a
+cryptosuite name, and MAY contain other properties that are specific to the
+cryptosuite. Valid example values include:
+<code>[{"cryptosuite": "eddsa-2022"}]</code> and
+<code>[{"cryptosuite": "ecdsa-2022"}, {"cryptosuite": "bbs-2022"}]</code>.
               </td>
             </tr>
           </table>
@@ -405,7 +415,7 @@ Credential Handler API (CHAPI):
   "query": [{
     "type": "DidAuthentication",
     "acceptedMethods": [{"method": "key"}],
-    "cryptosuite": "ecdsa-2022"
+    "acceptedCryptosuites": [{"cryptosuite": "ecdsa-2022"}]
   }],
   "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
   "domain": "example.com"
@@ -426,12 +436,12 @@ endpoint:
   "query": [{
     "type": "DidAuthentication",
     "acceptedMethods": [{"method": "key"}, {"method": "web"}],
-    "cryptosuite": "ecdsa-2022"
+    "acceptedCryptosuites": [{"cryptosuite": "ecdsa-2022"}]
   }, {
     "type": "DidAuthentication",
     "required": false,
     "acceptedMethods": [{"method": "key"}, {"method": "web"}],
-    "cryptosuite": "bbs-2022"
+    "acceptedCryptosuites": [{"cryptosuite": "bbs-2022"}]
   }],
   "challenge": "zLEwtBYgQVNR4tyeo",
   "domain": "didauth.example",
@@ -508,7 +518,7 @@ The example below demonstrates a simple DID Authentication response.
   "type": "VerifiablePresentation",
   "holder": "did:example:12345",
   "proof": {
-    "type": "DataIntegritySignature",
+    "type": "DataIntegrityProof",
     "cryptosuite": "eddsa-2022",
     "verificationMethod": "did:example:12345#key-1",
     "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
