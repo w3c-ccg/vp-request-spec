@@ -318,7 +318,7 @@ of a challenge by the <a>verifier</a> and a response by a <a>holder</a>:
         <pre class="example" title="A DID Authentication request">
 {
   "query": [{
-    "type": "DidAuthentication",
+    "type": "DIDAuthentication",
     "acceptedMethods": [{"method": "example"}]
   }],
   "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
@@ -413,7 +413,7 @@ Credential Handler API (CHAPI):
             title="A DID Authentication request using did:web and ecdsa-2022">
 {
   "query": [{
-    "type": "DidAuthentication",
+    "type": "DIDAuthentication",
     "acceptedMethods": [{"method": "key"}],
     "acceptedCryptosuites": [{"cryptosuite": "ecdsa-2022"}]
   }],
@@ -434,11 +434,11 @@ endpoint:
           <pre class="example" title="A complex DID Authentication request">
 {
   "query": [{
-    "type": "DidAuthentication",
+    "type": "DIDAuthentication",
     "acceptedMethods": [{"method": "key"}, {"method": "web"}],
     "acceptedCryptosuites": [{"cryptosuite": "ecdsa-2022"}]
   }, {
-    "type": "DidAuthentication",
+    "type": "DIDAuthentication",
     "required": false,
     "acceptedMethods": [{"method": "key"}, {"method": "web"}],
     "acceptedCryptosuites": [{"cryptosuite": "bbs-2022"}]
