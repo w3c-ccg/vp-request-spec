@@ -816,7 +816,7 @@ null // if the user cancels
   "dataType": "VerifiablePresentation",
   "data": {
     // Verifiable Presentation goes here, containing the credentials
-    // that the user agreed to share, or `null` if the user canceled
+    // that the user agreed to share
   }
 }
 
@@ -848,8 +848,9 @@ null // if the user cancels
   "type": "web",
   "dataType": "VerifiablePresentation",
   "data": {
-    // Verifiable Presentation goes here, containing the credentials
-    // that the user agreed to store
+    // Verifiable Presentation goes here, optionally containing the
+    // credentials that the user agreed to store (can be an empty
+    // presentation or `null`, but this does not indicate cancelation)
   }
 }
           </pre>
