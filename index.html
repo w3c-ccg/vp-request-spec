@@ -824,6 +824,53 @@ const {data: presentation} = webCredential;
 // send `presentation` to server for forwarding to verifier API
           </pre>
 
+          <pre class="example nohighlight" title="Example interact request.">
+// requesting DID Authentication that can be performed at the given `interact`
+// service endpoint; the endpoint may respond to the DID Authentication
+// response with another VPR or a VP with credentials
+const credentialQuery = {
+  web: {
+    VerifiablePresentation: {
+      query: {
+        "type": "DIDAuthentication",
+        "acceptedMethods": [{"method": "example"}]
+      },
+      challenge: '3182bdea-63d9-11ea-b6de-3b7c1404d57f',
+      domain: 'jobs.example.com',
+      interact: {
+        service: [{
+          type: "UnmediatedPresentationService2021",
+          serviceEndpoint: "https://example.edu/exchangers/z238348134/exchanges/z872347234"
+        }]
+      }
+    },
+    // optionally include credential handler origins to recommend to
+    // the user if they have no wallet or may want to choose one
+    // the RP recommends; this is an optional CHAPI feature, it is not
+    // specific to VPR
+    recommendedHandlerOrigins: [
+      'https://wallet.example'
+    ]
+  }
+};
+const webCredential = await navigator.credentials.get(credentialQuery);
+
+if(!webCredential) {
+  console.log('user canceled');
+}
+
+// Response:
+
+null // if the user cancels
+
+// or a WebCredential with these attributes/values:
+{
+  "type": "web",
+  // wallet responded to the request out-of-band
+  "dataType": "OutOfBand",
+  "data": null
+}
+          </pre>
 
           <h4>store()</h4>
 
@@ -833,7 +880,7 @@ can ask to store a credential during a user gesture event, for example when the
 user pushes a button to receive a credential.
           </p>
 
-          <pre class="example nohighlight" title="Requesting via get().">
+          <pre class="example nohighlight" title="Example store() request.">
 const result = await navigator.credentials.store(webCredential);
 if(!result) {
   console.log('store credential operation canceled');
