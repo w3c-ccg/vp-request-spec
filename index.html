@@ -567,6 +567,97 @@ Capabilities or "zcaps" in the Verifiable Presentation.
         </pre>
       </section>
     </section>
+    <section>
+      <h3>Logical Operations in Queries</h3>
+
+      <p>
+In Verifiable Presentation Requests, the structuring and retrieval of
+information rely on the use of logical operations. "AND" and "OR" operations
+play crucial roles in defining the path to desired data.
+      </p>
+
+      <section>
+        <h3>Top-Level Queries ("AND" Operation)</h3>
+        
+        <p>
+At the top-most level of our request structure, we assume an implicit "AND"
+operation between different types of queries. Each query is a unique condition
+that needs to be met to fulfill the request. This means, each query listed in
+the top-level array is an independent requirement.
+        </p>
+
+        <p>
+In this example, we have two queries: `APopularQueryType` and
+`AnotherQueryType`. The "AND" operation here implies that both these conditions
+need to be met in order to fulfill the request.
+        </p>
+
+        <pre class="example" title="Multiple credentials requested at once using top-level queries">
+{
+  "query": [
+    // "and"
+    {
+      "type": 'APopularQueryType',
+      // query details ...
+    },
+    // "and"
+    {
+      "type": 'AnotherQueryType',
+      // query details ...
+    }
+  ]
+}
+        </pre>
+      </section>
+
+      <section>
+        <h3>Nested Queries ("OR" Operation)</h3>
+        
+        <p>
+Within specific query types, we can define an "OR" operation. This operation
+indicates that any one of the nested conditions should be met. Even when all
+`credentialQuery` objects are optional, we interpret them as "OR" operations
+within their context. This allows for flexible and forgiving data retrieval
+where optional conditions can refine the results when possible, but their
+absence will not halt the process.
+        </p>
+
+        <p>
+In this `QueryByExample` type, we have a `credentialQuery` array where all
+queries are optional. The "OR" operation suggests that fulfilling any one of the
+listed conditions within `credentialQuery` will enhance the results, but is not
+a requirement for the request to be valid or fulfilled. If none of the optional
+`credentialQuery` conditions are met, the request will still proceed with the
+other conditions outside the `credentialQuery` scope, which are interpreted with
+an "AND" operation.
+        </p>
+
+        <pre class="example" title="">
+{
+  "query": [
+    // "and"
+    {
+      "type": "QueryByExample",
+      "credentialQuery": [
+        // "or"
+        {
+          "required": false,
+          ...
+        },
+        // "or"
+        {
+          "required": false,
+          ...
+        },
+      ]
+    },
+    // "and"
+    { ... }
+  ]
+}
+        </pre>
+      </section>
+    </section>
   </section>
 
     <section class="normative">
