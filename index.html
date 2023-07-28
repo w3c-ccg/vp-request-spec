@@ -631,12 +631,14 @@ mechanism.
   "service": [{
     "id": "did:example:123456789abcdefghi#didcomm-1",
     "type": "DIDCommMessaging",
-    "serviceEndpoint": "http://example.com/path",
-    "accept": [
-       "didcomm/v2",
-       "didcomm/aip2;env=rfc587"
-     ],
-     "routingKeys": ["did:example:somemediator#somekey"]
+    "serviceEndpoint": {
+      "uri": "http://example.com/path",
+      "accept": [
+        "didcomm/v2",
+        "didcomm/aip2;env=rfc587"
+      ],
+      "routingKeys": ["did:example:somemediator#somekey"]
+    }
   }]
 }
 ...
