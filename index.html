@@ -234,19 +234,19 @@ types.
             "credentialSchema": {
               "id": "urn:foo:1234",
               "type": "SomeType"
-            },
-            // (Optional) Specify credentials from a particular issuer only
-            "trustedIssuer": [
-              {
-                "required": true,
-                "issuer": "urn:some:required:issuer"
-              }
-            ],
-            // (Optional)
-            "issuerQuery": [
-              //
-            ]
-          }
+            }
+          },
+          // (Optional) Specify credentials from a particular issuer only
+          "trustedIssuer": [
+            {
+              "required": true,
+              "issuer": "urn:some:required:issuer"
+            }
+          ],
+          // (Optional)
+          "issuerQuery": [
+            //
+          ]
         }
       ]
     },
