@@ -340,7 +340,7 @@ by providing the following response:
   "holder": "did:example:12345",
   "proof": {
     "type": "DataIntegrityProof",
-    "cryptosuite": "eddsa-2022",
+    "cryptosuite": "eddsa-rdfc-2022",
     "verificationMethod": "did:example:12345#key-1",
     "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
     "domain": "example.com",
@@ -396,8 +396,8 @@ used by the <a>holder</a> to generate a cryptographic proof. Each object in the
 array MUST contain a property called `cryptosuite` with a value that is a
 cryptosuite name, and MAY contain other properties that are specific to the
 cryptosuite. Valid example values include:
-<code>[{"cryptosuite": "eddsa-2022"}]</code> and
-<code>[{"cryptosuite": "ecdsa-2022"}, {"cryptosuite": "bbs-2022"}]</code>.
+<code>[{"cryptosuite": "eddsa-rdfc-2022"}]</code> and
+<code>[{"cryptosuite": "ecdsa-rdfc-2019"}, {"cryptosuite": "bbs-2023"}]</code>.
               </td>
             </tr>
           </table>
@@ -410,12 +410,12 @@ Credential Handler API (CHAPI):
           </p>
 
           <pre class="example"
-            title="A DID Authentication request using did:web and ecdsa-2022">
+            title="A DID Authentication request using did:web and ecdsa-rdfc-2022">
 {
   "query": [{
     "type": "DIDAuthentication",
     "acceptedMethods": [{"method": "key"}],
-    "acceptedCryptosuites": [{"cryptosuite": "ecdsa-2022"}]
+    "acceptedCryptosuites": [{"cryptosuite": "ecdsa-rdfc-2019"}]
   }],
   "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
   "domain": "example.com"
@@ -436,12 +436,12 @@ endpoint:
   "query": [{
     "type": "DIDAuthentication",
     "acceptedMethods": [{"method": "key"}, {"method": "web"}],
-    "acceptedCryptosuites": [{"cryptosuite": "ecdsa-2022"}]
+    "acceptedCryptosuites": [{"cryptosuite": "ecdsa-rdfc-2019"}]
   }, {
     "type": "DIDAuthentication",
     "required": false,
     "acceptedMethods": [{"method": "key"}, {"method": "web"}],
-    "acceptedCryptosuites": [{"cryptosuite": "bbs-2022"}]
+    "acceptedCryptosuites": [{"cryptosuite": "bbs-2023"}]
   }],
   "challenge": "zLEwtBYgQVNR4tyeo",
   "domain": "didauth.example",
@@ -519,7 +519,7 @@ The example below demonstrates a simple DID Authentication response.
   "holder": "did:example:12345",
   "proof": {
     "type": "DataIntegrityProof",
-    "cryptosuite": "eddsa-2022",
+    "cryptosuite": "eddsa-rdfc-2022",
     "verificationMethod": "did:example:12345#key-1",
     "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
     "domain": "example.com",
@@ -578,7 +578,7 @@ play crucial roles in defining the path to desired data.
 
       <section>
         <h3>Top-Level Queries ("AND" Operation)</h3>
-        
+
         <p>
 At the top-most level of the request structure, different types of queries are
 expected to be processed as "AND" operations. Each query is a unique condition
@@ -612,13 +612,13 @@ need to be met in order to fulfill the request.
 
       <section>
         <h3>Nested Queries ("OR" Operation)</h3>
-        
+
         <p>
-Within a specific query type, an "OR" operation can be defined. This operation 
-indicates that one or more of the nested conditions needs to be met. When 
-all credentialQuery objects are optional, they are interpreted as "OR" 
-operations within their context. This enables flexible and forgiving data 
-retrieval where optional conditions can refine the results when possible, but 
+Within a specific query type, an "OR" operation can be defined. This operation
+indicates that one or more of the nested conditions needs to be met. When
+all credentialQuery objects are optional, they are interpreted as "OR"
+operations within their context. This enables flexible and forgiving data
+retrieval where optional conditions can refine the results when possible, but
 their absence will not halt the process.
         </p>
 
