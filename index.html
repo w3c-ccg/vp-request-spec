@@ -335,7 +335,7 @@ by providing the following response:
 
         <pre class="example" title="A DID Authentication response">
 {
-  "@context": ["https://www.w3.org/2022/credentials/v2"],
+  "@context": ["https://www.w3.org/ns/credentials/v2"],
   "type": "VerifiablePresentation",
   "holder": "did:example:12345",
   "proof": {
@@ -344,7 +344,7 @@ by providing the following response:
     "verificationMethod": "did:example:12345#key-1",
     "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
     "domain": "example.com",
-    "created": "2022-02-25T14:58:42Z",
+    "created": "2024-02-25T14:58:42Z",
     "proofPurpose": "authentication",
     "proofValue": "z3FXQjecWufY46...UAUL5n2Brbx"
   }
@@ -404,13 +404,13 @@ cryptosuite. Valid example values include:
 
           <p>
 The following example demonstrates that the <a>verifier</a> would like the
-<a>holder</a> to utilize the DID Web method and the 2022 ECDSA cryptography
-suite to authenticate over the established communication channel, such as the
-Credential Handler API (CHAPI):
+<a>holder</a> to utilize the DID Web method and a data integrity ECDSA
+cryptography suite to authenticate over the established communication channel,
+such as the Credential Handler API (CHAPI):
           </p>
 
           <pre class="example"
-            title="A DID Authentication request using did:web and ecdsa-rdfc-2022">
+            title="A DID Authentication request using did:web and ecdsa-rdfc-2019">
 {
   "query": [{
     "type": "DIDAuthentication",
@@ -424,11 +424,11 @@ Credential Handler API (CHAPI):
 
           <p>
 The next example demonstrates that the <a>verifier</a> would like the
-<a>holder</a> to utilize either the DID Key or DID Web method, and the 2022 EdDSA
-cryptography suite, and optionally also include a cryptographic proof that they
-are capable of performing a 2022 BBS proof, and authenticate over a different
-communication channel, in this case utilizing a Verifiable Credential API HTTP
-endpoint:
+<a>holder</a> to utilize either the DID Key or DID Web method, and the standard
+EdDSA data integrity cryptography suite, and optionally also include a
+cryptographic proof that they are capable of performing a data integrity BBS
+proof, and authenticate over a different communication channel, in this case
+utilizing a Verifiable Credential API HTTP endpoint:
           </p>
 
           <pre class="example" title="A complex DID Authentication request">
@@ -514,7 +514,7 @@ The example below demonstrates a simple DID Authentication response.
         <pre class="example"
           title="A DID Authentication response using did:key">
 {
-  "@context": ["https://www.w3.org/2022/credentials/v2"],
+  "@context": ["https://www.w3.org/ns/credentials/v2"],
   "type": "VerifiablePresentation",
   "holder": "did:example:12345",
   "proof": {
@@ -523,7 +523,7 @@ The example below demonstrates a simple DID Authentication response.
     "verificationMethod": "did:example:12345#key-1",
     "challenge": "99612b24-63d9-11ea-b99f-4f66f3e4f81a",
     "domain": "example.com",
-    "created": "2022-02-25T14:58:42Z",
+    "created": "2024-02-25T14:58:42Z",
     "proofPurpose": "authentication",
     "proofValue": "z3FXQjecWufY46...UAUL5n2Brbx"
   }
