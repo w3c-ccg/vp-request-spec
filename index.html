@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Verifiable Presentation Request v0.2</title>
+    <title>Verifiable Presentation Request v2024</title>
     <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
     <!--
       === NOTA BENE ===
@@ -19,7 +19,7 @@
         shortName: "vp-request-spec",
 
         // subtitle for the spec
-        subtitle: "",
+        subtitle: "A data model for requesting presenations of verifiable credentials",
 
         // if you wish the publication date to be other than today, set this
         //publishDate: "",
@@ -33,7 +33,6 @@
         // previousMaturity:  "WD",
 
         // extend the bibliography entries
-        localBiblio: ccg.localBiblio,
         doJsonLd: true,
 
         github: "https://github.com/w3c-ccg/vp-request-spec/",
@@ -58,8 +57,7 @@
         // authors, add as many as you like.
         // This is optional, uncomment if you have authors as well as editors.
         // only "name" is required. Same format as editors.
-        authors:
-        [
+        authors: [
           // { name: "Dave Longley", url: "https://digitalbazaar.com/",
           //   company: "Digital Bazaar", companyURL: "https://digitalbazaar.com/"},
           // { name: "Manu Sporny", url: "https://digitalbazaar.com/",
@@ -78,6 +76,24 @@
         lint: {"no-unused-dfns": false},
         postProcess: [restrictRefs],
 
+        xref: ["INFRA", "MIMESNIFF", "VC-DATA-MODEL-2.0"],
+        otherLinks: [{
+          key: "Related Specifications",
+          data: [{
+            value: "The Verifiable Credentials Data Model v2.0",
+            href: "https://www.w3.org/TR/VC-DATA-MODEL-2.0/"
+          }, {
+            value: "The Edwards Digital Signature Algorithm Cryptosuites v1.0",
+            href: "https://www.w3.org/TR/vc-di-eddsa/"
+          }, {
+            value: "The Elliptic Curve Digital Signature Algorithm Cryptosuites v1.0",
+            href: "https://www.w3.org/TR/vc-di-ecdsa/"
+          }, {
+            value: "The BBS Digital Signature Algorithm Cryptosuites v1.0",
+            href: "https://www.w3.org/TR/vc-di-bbs/"
+          }]
+        }],
+
         // URI of the patent status for this WG, for Rec-track documents
         // !!!! IMPORTANT !!!!
         // This is important for Rec-track documents, do not copy a patent URI from a random
@@ -89,6 +105,14 @@
       };
     </script>
     <style>
+code {
+  color: rgb(199, 73, 0);
+  font-weight: bold;
+}
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
 pre .highlight {
   font-weight: bold;
   color: Green;
@@ -109,9 +133,35 @@ pre .comment {
   -ms-user-select: none;
   user-select: none;
 }
-.color-text {
-  font-weight: bold;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+ol.algorithm { counter-reset:numsection; list-style-type: none; }
+ol.algorithm li { margin: 0.5em 0; }
+ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+
+table.simple {
+    border-collapse: collapse;
+    margin: 25px 0;
+    min-width: 400px;
+    border: 1px solid #dddddd;
+}
+table.simple thead tr {
+    background-color: #005a9c;
+    color: #ffffff;
+    text-align: left;
+}
+table.simple th,
+table.simple td {
+    padding: 12px 15px;
+    vertical-align: top;
+    text-align: left;
+}
+table.simple tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+table.simple tbody tr:nth-of-type(even) {
+    background-color: #00000008;
+}
+table.simple tbody tr:last-of-type {
+    border-bottom: 2px solid #005a9c;
 }
     </style>
   </head>
@@ -191,10 +241,22 @@ it wishes to perform from the receiver.
       <section id="conformance">
       </section>
 
-      <section class="informative">
+      <section>
         <h2>Terminology</h2>
 
-        <div data-include="https://raw.githubusercontent.com/w3c/vc-data-model/v2.0/terms.html"></div>
+        <p>
+This specification relies on terminology defined in [[[VC-DATA-MODEL-2.0]]].
+This section defines additional terms used in this specification. A link to
+these terms is included whenever they appear in this specification.
+        </p>
+
+        <dl class="termlist definitions" data-sort="ascending">
+          <dt><dfn class="export">presentation request</dfn></dt>
+          <dd>
+A request made by a [=verifier=] for a [=presentation=] by the [=holder=].
+          </dd>
+
+
       </section>
     </section>
 

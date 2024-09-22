@@ -1,140 +1,26 @@
 /* globals omitTerms, respecConfig, $, require */
 /* exported linkCrossReferences, restrictReferences, fixIncludes */
 
-var ccg = {
-  // Add as the respecConfig localBiblio variable
-  // Extend or override global respec references
-  localBiblio: {
-    'REST': {
-      title: 'Architectural Styles and the Design of Network-based Software Architectures',
-      date: '2000',
-      href: 'http://www.ics.uci.edu/~fielding/pubs/dissertation/',
-      authors: [
-        'Roy Thomas Fielding'
-      ],
-      publisher: 'University of California, Irvine.'
-    },
-    'VC-EXTENSION-REGISTRY': {
-      title: 'Verifiable Credentials Extension Registry',
-      href: 'https://w3c-ccg.github.io/vc-extension-registry/',
-      authors: [
-        'Manu Sporny'
-      ],
-      status: 'CG-DRAFT',
-      publisher: 'Credentials Community Group'
-    },
-    'STRING-META': {
-      title: 'Strings on the Web: Language and Direction Metadata',
-      href: 'https://www.w3.org/TR/string-meta/',
-      authors: [
-        'Addison Phillips',
-        'Richard Ishida'
-      ],
-      status: 'WD',
-      publisher: 'Internationalization Working Group'
-    },
-    'LD-PROOFS': {
-      title: 'Linked Data Proofs',
-      href: 'https://w3c-dvcg.github.io/ld-proofs/',
-      authors: [
-        'Manu Sporny',
-        'Dave Longley'
-      ],
-      status: 'CG-DRAFT',
-      publisher: 'Digital Verification Community Group'
-    },
-    'LD-SIGNATURES': {
-      title: 'Linked Data Signatures',
-      href: 'https://w3c-dvcg.github.io/ld-signatures/',
-      authors: [
-        'Manu Sporny',
-        'Dave Longley'
-      ],
-      status: 'CG-DRAFT',
-      publisher: 'Digital Verification Community Group'
-    },
-    'LDS-RSA2018': {
-      title: 'The 2018 RSA Linked Data Signature Suite',
-      href: 'https://w3c-dvcg.github.io/lds-rsa2018/',
-      authors: [
-        'Manu Sporny',
-        'Dave Longley'
-      ],
-      status: 'CG-DRAFT',
-      publisher: 'Digital Verification Community Group'
-    },
-    'MULTIBASE': {
-      title: 'Multibase',
-      href: 'https://tools.ietf.org/html/draft-multiformats-multibase',
-      authors: [
-        'Juan Benet',
-        'Manu Sporny'
-      ],
-      status: 'Independent Draft',
-      publisher: 'IETF'
-    },
-    'MULTICODEC': {
-      title: 'Multibase',
-      href: 'https://github.com/multiformats/multicodec/blob/master/README.md',
-      authors: [
-        'Juan Benet',
-        'Manu Sporny'
-      ],
-      status: 'Independent Draft',
-      publisher: 'IETF'
-    },
-    // aliases to known references
-    'HTTP-SIGNATURES': {
-      aliasOf: 'http-signatures'
-    },
-    'DEMOGRAPHICS': {
-      title: 'Simple Demographics Often Identify People Uniquely',
-      href: 'http://dataprivacylab.org/projects/identifiability/paper1.pdf',
-      authors: [
-        'Latanya Sweeney'
-      ],
-      publisher: 'Data Privacy Lab'
-    },
-    'HASHLINK': {
-      title: 'Cryptographic Hyperlinks',
-      href: 'https://tools.ietf.org/html/draft-sporny-hashlink',
-      authors: [
-        'Manu Sporny'
-      ],
-      status: 'Internet-Draft',
-      publisher: 'Internet Engineering Task Force (IETF)'
-    },
-    'IPFS': {
-      title: 'InterPlanetary File System (IPFS)',
-      href: 'https://en.wikipedia.org/wiki/InterPlanetary_File_System',
-      publisher: 'Wikipedia'
-    },
-    'JSON-SCHEMA-2018': {
-      title: 'JSON Schema: A Media Type for Describing JSON Documents',
-      href: 'https://tools.ietf.org/html/draft-handrews-json-schema',
-      authors: [
-        'Austin Wright',
-        'Henry Andrews'
-      ],
-      status: 'Internet-Draft',
-      publisher: 'Internet Engineering Task Force (IETF)'
-    },
-    'JSON-LD': {
-      title: 'JSON-LD 1.1: A JSON-based Serialization for Linked Data',
-      href: 'https://www.w3.org/TR/json-ld11/',
-      authors: [
-        'Gregg Kellogg',
-        'Manu Sporny',
-        'Dave Longley',
-        'Markus Lanthaler',
-        'Pierre-Antoine Champin',
-        'Niklas Lindström'
-      ],
-      status: 'WD',
-      publisher: 'W3C JSON-LD 1.1 Working Group'
+require(["core/pubsubhub"], (respecEvents) => {
+  "use strict";
+
+  respecEvents.sub('end-all', (message) => {
+    // remove data-cite on where the citation is to ourselves.
+    const selfDfns = document.querySelectorAll("dfn[data-cite^='" + respecConfig.shortName.toUpperCase() + "#']");
+    for (const dfn of selfDfns) {
+      delete dfn.dataset.cite;
     }
-  }
-};
+
+    // Update data-cite references to ourselves.
+    const selfRefs = document.querySelectorAll("a[data-cite^='" + respecConfig.shortName.toUpperCase() + "#']");
+    for (const anchor of selfRefs) {
+      anchor.href= anchor.dataset.cite.replace(/^.*#/,"#");
+      delete anchor.dataset.cite;
+    }
+
+  });
+
+});
 
 // Removes dfns that aren't referenced anywhere in the spec.
 // To ensure a definition appears in the Terminology section, use
@@ -192,3 +78,35 @@ function restrictRefs(config, document){
 
 }
 
+function _esc(s) {
+  return s.replace(/&/g,'&amp;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;');
+}
+
+function reindent(text) {
+  // TODO: use trimEnd when Edge supports it
+  const lines = text.trimRight().split("\n");
+  while (lines.length && !lines[0].trim()) {
+    lines.shift();
+  }
+  const indents = lines.filter(s => s.trim()).map(s => s.search(/[^\s]/));
+  const leastIndent = Math.min(...indents);
+  return lines.map(s => s.slice(leastIndent)).join("\n");
+}
+
+function updateExample(doc, content) {
+  // perform transformations to make it render and prettier
+  return _esc(reindent(unComment(doc, content)));
+}
+
+function unComment(doc, content) {
+  // perform transformations to make it render and prettier
+  return content
+    .replace(/<!--/, '')
+    .replace(/-->/, '')
+    .replace(/< !\s*-\s*-/g, '<!--')
+    .replace(/-\s*- >/g, '-->')
+    .replace(/-\s*-\s*&gt;/g, '--&gt;');
+}
