@@ -265,12 +265,47 @@ A request made by a [=verifier=] for a [=presentation=] by the [=holder=].
 
       <p>
 The <dfn>query type</dfn> serves as the main extension point mechanism for
-requests for data in the presentation. This document defines several common query
-types.
+requests for data in the presentation. While this document defines several
+common query types, all query objects are of the following form:
       </p>
+
+      <dl>
+        <dt>query</dt>
+        <dd>
+A REQUIRED property that specifies the information requested by the
+[=verifier=]. The value MUST be one or more [=maps=] where each [=map=] MUST
+define a `type` property with an associated [=string=] value.
+        </dd>
+        <dt><dfn class="export">challenge</dfn></dt>
+        <dd>
+An OPTIONAL, unique [=string=] that is provided by a [=verifier=] to a
+[=holder=] during a specific [=presentation request=]. The [=holder=] includes
+the data in a [=verifiable presentation=] to the [=verifier=] to protect against
+<a data-cite="?VC-DATA-MODEL-2.0#replay-attack">replay attacks</a>.
+        </dd>
+        <dt><dfn class="export">domain</dfn></dt>
+        <dd>
+An OPTIONAL [=string=] that is provided by a [=verifier=] to a [=holder=] during
+a [=presentation request=]. The [=holder=] checks to ensure that the data is
+associated with the domain, such as a website domain, that they are interacting
+with, and if it is, includes the data in a [=verifiable presentation=]. A domain
+is used to ensure that the [=holder=] limits their [=verifiable presentation=]
+to a specific [=verifier=] in order to protect against
+<a data-cite="?VC-DATA-MODEL-2.0#replay-attack">replay attacks</a>.
+        </dd>
+
+      </dl>
 
       <section>
         <h3>Query By Example</h3>
+
+        <p>
+The "query by example" credential query format is designed to enable developers
+to easily request the [=claims=] in one or more [=verifiable credentials=] that
+they need to perform a particular business process. The query can also
+specify one or more [=issuers=] that is trusted by the [=verifier=] as well as
+properties that prevent replay attacks such as a [=challenge=] and [=domain=].
+        </p>
 
         <pre class="example nohighlight" title="A Query By Example query">
 {
@@ -304,10 +339,6 @@ types.
               "required": true,
               "issuer": "urn:some:required:issuer"
             }
-          ],
-          // (Optional)
-          "issuerQuery": [
-            //
           ]
         }
       ]
