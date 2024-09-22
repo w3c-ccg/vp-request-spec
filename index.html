@@ -328,46 +328,6 @@ types.
       </section>
 
       <section>
-        <h3>Query By Frame</h3>
-        <pre class="example nohighlight" title="A request for Query By Frame">
-{
-  "query": [{
-    "type": "QueryByFrame",
-    "credentialQuery": [{
-      "reason": "Wallet XYZ is ready to selectively disclose new credentials.",
-      "frame": { ... }
-    }],
-  }]
-}
-        </pre>
-
-        <pre class="example nohighlight" title="A query by frame from a verifier">
-{
-  "query": [{
-    "type": "QueryByFrame",
-    "credentialQuery": {
-      "frame": {
-        "@context": [
-          "https://www.w3.org/2018/credentials/v1",
-          "https://w3id.org/traceability/v1",
-        ],
-        "type": ["VerifiableCredential", "MillTestReportCertificate"],
-        "credentialSubject": {
-          "@explicit": true,
-          "type": ["MillTestReport"],
-          "product": {},
-          "manufacturer": {}
-        }
-      }
-    }
-  }],
-  "domain": "customs.example.gov",
-  "challenge": "3182bdea-63d9-11ea-b6de-3b7c1404d57f"
-}
-        </pre>
-      </section>
-
-      <section>
         <h3>DID Authentication</h3>
 
         <p>
