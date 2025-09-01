@@ -597,14 +597,14 @@ Capabilities or "zcaps" in the Verifiable Presentation.
   query: [{
     type: 'ZcapQuery',
     capabilityQuery: [{
-      referenceId: `a-memorable-name`,
+      referenceId: `a-memorable-semantic-name-about-the-zcap`,
       allowedAction: ['read', 'write'],
       controller: 'did:key:1234'
       invocationTarget: {
         type: 'urn:edv:documents'
       }
     }, {
-      referenceId: `a-sign-request`,
+      referenceId: `a-zcap-for-signing-credentials`,
       allowedAction: 'sign',
       controller: 'did:key:1234',
       invocationTarget: {
@@ -612,7 +612,7 @@ Capabilities or "zcaps" in the Verifiable Presentation.
         proofPurpose: 'assertionMethod'
       }
     }, {
-      referenceId: `another-memorable-name`,
+      referenceId: `forPostingAnExample`,
       allowedAction: 'POST',
       controller: 'did:key:1234',
       invocationTarget: "https://example.com/api/endpoint"
