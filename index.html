@@ -585,7 +585,7 @@ The example below demonstrates a simple DID Authentication response.
       </section>
 
       <section>
-        <h3>Authorization Capability Request</h3>
+        <h2>Authorization Capability Request</h2>
 
         <p>
 This query type would be included in a request to ask for Authorization
@@ -599,20 +599,23 @@ Capabilities or "zcaps" in the Verifiable Presentation.
     capabilityQuery: [{
       referenceId: `a-memorable-name`,
       allowedAction: ['read', 'write'],
-      invoker: 'did:key:1234',
-      delegator: 'did:key:1234'
+      controller: 'did:key:1234'
       invocationTarget: {
         type: 'urn:edv:documents'
       }
     }, {
-      referenceId: `another-memorable-name`,
+      referenceId: `a-sign-request`,
       allowedAction: 'sign',
-      invoker: 'did:key:1234',
-      delegator: 'did:key:1234',
+      controller: 'did:key:1234',
       invocationTarget: {
         type: 'Ed25519VerificationKey2018',
         proofPurpose: 'assertionMethod'
       }
+    }, {
+      referenceId: `another-memorable-name`,
+      allowedAction: 'POST',
+      controller: 'did:key:1234',
+      invocationTarget: "https://example.com/api/endpoint"
     }],
     challenge: '111112b24-63d9-11ea-b99f-4f66f3e4f81a'
   }]
