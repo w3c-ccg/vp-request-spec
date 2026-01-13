@@ -1,3 +1,7 @@
+> [!NOTE]
+> This specification has been superceeded. Please see the [Verifiable Presentation Request
+> section of the VCALM specification](https://w3c-ccg.github.io/vcalm/#verifiable-presentation-request).
+
 # Verifiable Presentation Request Specification
 
 > Specification for a query language to request Verifiable Presentations from wallets etc.
