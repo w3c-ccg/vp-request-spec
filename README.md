@@ -1,6 +1,6 @@
 > [!NOTE]
 > This specification has been superceeded. Please see the [Verifiable Presentation Request
-> section of the VCALM specification](https://w3c-ccg.github.io/vcalm/#verifiable-presentation-request).
+> section of the VCALM specification](https://w3c.github.io/vcalm/#requesting-a-presentation).
 
 # Verifiable Presentation Request Specification
 
